@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class CS446DataSet {
 
-    private int [][] x;
+    public int [][] x;
     private int []   y;
 
     private Random randBinary;
@@ -154,6 +154,14 @@ public class CS446DataSet {
      */
     private int generateRandomBinary() {
         return randBinary.nextInt(2);
+    }
+
+    public void printFeatures() {
+        prettyPrint2DArray(x);
+    }
+
+    public void printLabels() {
+        prettyPrint1DArray(y);
     }
 
     /**
