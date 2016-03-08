@@ -9,8 +9,8 @@ import java.util.*;
  */
 public class CS446DataSet {
 
-    public int [][] x;
-    private int []   y;
+    private double [][] x;
+    private double []   y;
 
     private Random randBinary;
     private Random randShuffle;
@@ -31,8 +31,8 @@ public class CS446DataSet {
     public CS446DataSet(int l, int m, int n, int k, boolean isNoisy) {
         initializeInternalDataStructures(k, n);
 
-        int [][] xx = new int[k][n];
-        int [] yy = new int[k];
+        double [][] xx = new double[k][n];
+        double [] yy = new double[k];
 
         int pNumberOfInstance = k / 2;
 
@@ -110,7 +110,7 @@ public class CS446DataSet {
      * Getter for feature vector
      * @return feature vector x
      */
-    public int[][] getFeatures() {
+    public double[][] getFeatures() {
         return x;
     }
 
@@ -118,7 +118,7 @@ public class CS446DataSet {
      * Getter for label vector
      * @return label vector y
      */
-    public int[] getLabels() {
+    public double[] getLabels() {
         return y;
     }
 
@@ -128,8 +128,8 @@ public class CS446DataSet {
      * @param n number of attributes
      */
     private void initializeInternalDataStructures(int k, int n) {
-        x = new int[k][n];
-        y = new int[k];
+        x = new double[k][n];
+        y = new double[k];
         randBinary = new Random(0); // given a seed of 0, to be deterministic
         randShuffle = new Random(0);
     }
@@ -168,7 +168,7 @@ public class CS446DataSet {
      * Print 1D array nicely
      * @param array array to be printed
      */
-    private void prettyPrint1DArray(int[] array) {
+    private void prettyPrint1DArray(double[] array) {
         System.out.println(Arrays.toString(array));
     }
 
@@ -176,7 +176,7 @@ public class CS446DataSet {
      * Print 2D array nicely
      * @param array array to be printed
      */
-    private void prettyPrint2DArray(int[][] array) {
+    private void prettyPrint2DArray(double[][] array) {
         System.out.println(Arrays.deepToString(array).replace("], ", "]\n"));
     }
 }
