@@ -69,6 +69,8 @@ case $1 in
 		file_name="SpamClassifier.lbj";;
 	"regression")
 		file_name="RegressionClassifier.lbj";;
+    "news")
+        file_name="news.lbj";;
 	*)
 		echo "Invalid argument: "$1
 		exit;;

@@ -1,0 +1,27 @@
+package edu.illinois.cs.cogcomp.lbjava.examples.news;
+
+import edu.illinois.cs.cogcomp.lbjava.examples.Post;
+import edu.illinois.cs.cogcomp.lbjava.examples.NewsgroupParser;
+
+discrete% BagOfWords(Post post) <- {
+    for (int i = 0; i < post.bodySize(); ++i) {
+        for (int j = 0; j < post.lineSize(i); ++j) {
+            String word = post.getBodyWord(i, j);
+            if (word.length() > 0 && word.substring(0, 1).matches("[A-Za-z]")) {
+                sense word;
+            }
+        }
+    }
+}
+
+discrete NewsgroupLabel(Post post) <- {
+    return post.getNewsgroup();
+}
+
+discrete SparseNetworkClassifier(Post post) <-
+    learn NewsgroupLabel
+    using BagOfWords
+
+    with SparseNetworkLearner {}
+
+end
