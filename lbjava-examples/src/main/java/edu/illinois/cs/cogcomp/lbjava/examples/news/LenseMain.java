@@ -31,7 +31,8 @@ public class LenseMain {
 
 
         // attach listener to learning rule
-        MomentumBackpropagation learningRule = (MomentumBackpropagation) neuralNet.getLearningRule();
+        MomentumBackpropagation learningRule = new MomentumBackpropagation();
+        //MomentumBackpropagation learningRule = (MomentumBackpropagation) neuralNet.getLearningRule();
 
         // set learning rate and max error
         learningRule.setLearningRate(0.2);
