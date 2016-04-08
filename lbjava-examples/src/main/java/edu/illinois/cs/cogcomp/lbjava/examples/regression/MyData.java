@@ -64,4 +64,13 @@ public class MyData {
     public double getLabel() {
         return label;
     }
+
+    @Override
+    public String toString() {
+        String out = "label = "+ label + "\n" + "features = ";
+        for(Double d : features) {
+            out += d + ", ";
+        }
+        return out;
+    }
 }

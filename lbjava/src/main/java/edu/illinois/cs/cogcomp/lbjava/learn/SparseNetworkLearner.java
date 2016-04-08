@@ -11,6 +11,7 @@
 package edu.illinois.cs.cogcomp.lbjava.learn;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -247,6 +248,13 @@ public class SparseNetworkLearner extends Learner
    **/
   public void learn(int[] exampleFeatures, double[] exampleValues,
                     int[] exampleLabels, double[] labelValues) {
+
+    //System.out.println(Arrays.toString(exampleFeatures));
+    //System.out.println(Arrays.toString(exampleValues));
+    //System.out.println(Arrays.toString(exampleLabels));
+    //System.out.println(Arrays.toString(labelValues));
+    //System.out.println();
+
     int label = exampleLabels[0];
     int N = network.size();
 
