@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.lbjava.learn;
 
+import edu.illinois.cs.cogcomp.lbjava.classify.Feature;
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
 import edu.illinois.cs.cogcomp.lbjava.classify.ScoreSet;
 import org.neuroph.core.data.DataSetRow;
@@ -63,8 +64,32 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
      **/
     @Override
     public FeatureVector classify(int[] exampleFeatures, double[] exampleValues) {
-        return null;
+        return new FeatureVector(featureValue(exampleFeatures, exampleValues));
     }
+
+    /**
+     * Classify into two categories,
+     * if >= 0, predict positive
+     * if <  0, predict negative
+     *
+     * @param f  The features array.
+     * @param v  The values array.
+     * @return feature
+     */
+    @Override
+    public Feature featureValue(int[] f, double[] v) {
+        int index = score(f, v) >= 0 ? 0 : 1;
+        return predictions.get(index);
+    }
+
+    public double score(int[] exampleFeatures, double[] exampleValues) {
+        DataSetRow row = new DataSetRow(exampleValues);
+        mlp.setInput(row.getInput());
+        mlp.calculate();
+        double[] networkOutput = mlp.getOutput();
+        return networkOutput[0];
+    }
+
 
     /**
      * If the <code>LinearThresholdUnit</code> is mistake driven, this method
@@ -120,5 +145,16 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
     @Override
     public void write(PrintStream out) {
 
+    }
+
+    public static class Parameters extends Learner.Parameters {
+
+        public double learningRateP;
+        public int[] hiddenLayersP;
+
+        public Parameters() {
+            learningRateP = defaultLearningRate;
+            hiddenLayersP = null;
+        }
     }
 }

@@ -1,24 +1,31 @@
-package edu.illinois.cs.cogcomp.lbjava.examples.news;
-
-import org.neuroph.core.NeuralNetwork;
-import org.neuroph.core.data.DataSet;
-import org.neuroph.core.data.DataSetRow;
-import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.learning.MomentumBackpropagation;
+package edu.illinois.cs.cogcomp.lbjava.examples.lense;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-public class LenseMain {
+import org.neuroph.core.NeuralNetwork;
+import org.neuroph.core.data.DataSet;
+import org.neuroph.core.data.DataSetRow;
+import org.neuroph.core.events.LearningEvent;
+import org.neuroph.core.events.LearningEventListener;
+import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.learning.BackPropagation;
+import org.neuroph.nnet.learning.MomentumBackpropagation;
+
+public class LenseEvent implements LearningEventListener {
 
     public static void main(String[] args) {
+        (new LenseEvent()).run();
+    }
+
+    private void run() {
 
         System.out.println("Creating training set...");
 
-        String trainingSetFileName = "data/lense/all_data.txt";
-        int inputsCount = 9;
+        String trainingSetFileName = "data/lense/data.txt";
+        int inputsCount = 4;
         int outputsCount = 3;
 
         System.out.println("Creating training set...");
@@ -26,21 +33,22 @@ public class LenseMain {
 
 
         System.out.println("Creating neural network...");
-        // create MultiLayerPerceptron neural network
-        MultiLayerPerceptron neuralNet = new MultiLayerPerceptron(inputsCount, 8, outputsCount);
+        MultiLayerPerceptron neuralNet = new MultiLayerPerceptron(inputsCount, 8, 8, outputsCount);
 
 
-        // attach listener to learning rule
         MomentumBackpropagation learningRule = new MomentumBackpropagation();
         //MomentumBackpropagation learningRule = (MomentumBackpropagation) neuralNet.getLearningRule();
+        learningRule.addListener(this);
 
-        // set learning rate and max error
+
         learningRule.setLearningRate(0.2);
-        //learningRule.setMaxError(0.01);
+        //learningRule.setMaxIterations(100);
+        learningRule.setMaxError(0.01);
+
+        neuralNet.setLearningRule(learningRule);
 
         System.out.println("Training network...");
-        // train the network with training set
-        //neuralNet.learn(dataSet);
+
         for (int i = 0; i < 1000; i++) {
             Iterator<DataSetRow> iterator = dataSet.iterator();
             while (iterator.hasNext()) {
@@ -48,6 +56,11 @@ public class LenseMain {
                 neuralNet.learn(dataSetRow);
             }
         }
+
+//        neuralNet.learn(dataSet);
+
+        System.out.printf("Current Iteration: ");
+        System.out.println(learningRule.getCurrentIteration());
 
         System.out.println("Training completed.");
         System.out.println("Testing network...");
@@ -57,7 +70,7 @@ public class LenseMain {
         System.out.println("Done.");
     }
 
-    public static void testNeuralNetwork(NeuralNetwork neuralNet, DataSet testSet) {
+    private void testNeuralNetwork(NeuralNetwork neuralNet, DataSet testSet) {
         PrintStream out = null;
         File file = new File("data/lense/output.txt");
         try {
@@ -96,4 +109,11 @@ public class LenseMain {
             out.close();
         }
     }
+
+    @Override
+    public void handleLearningEvent(LearningEvent event) {
+        BackPropagation bp = (BackPropagation) event.getSource();
+        System.out.println(bp.getCurrentIteration() + ". iteration | Total network error: " + bp.getTotalNetworkError());
+    }
 }
+

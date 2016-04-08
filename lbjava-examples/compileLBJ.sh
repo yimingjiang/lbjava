@@ -71,6 +71,8 @@ case $1 in
 		file_name="RegressionClassifier.lbj";;
     "news")
         file_name="news.lbj";;
+    "lense")
+        file_name="lense.lbj";;
 	*)
 		echo "Invalid argument: "$1
 		exit;;

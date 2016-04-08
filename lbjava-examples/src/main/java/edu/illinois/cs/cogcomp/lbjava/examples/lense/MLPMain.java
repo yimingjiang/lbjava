@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.lbjava.examples.news;
+package edu.illinois.cs.cogcomp.lbjava.examples.lense;
 
 import edu.illinois.cs.cogcomp.lbjava.learn.MultiLayerPerceptron;
 
