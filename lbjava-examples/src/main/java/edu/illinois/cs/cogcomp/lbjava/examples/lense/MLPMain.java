@@ -21,7 +21,7 @@ public class MLPMain {
         mlpClassifier.setParameters(snp);
 
         BatchTrainer trainer = new BatchTrainer(mlpClassifier, d);
-        trainer.train(1);
+        trainer.train(1000);
 
         Classifier oracle = new LenseLabel();
         TestDiscrete.testDiscrete(new TestDiscrete(), mlpClassifier, oracle, d, true, 20);

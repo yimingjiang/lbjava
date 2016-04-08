@@ -56,7 +56,11 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
             isFirstTime = false;
         }
 
-        DataSetRow row = new DataSetRow(exampleValues, exampleValues);
+        double[] exampleLabelsDouble = new double[exampleLabels.length];
+        for(int i = 0; i < exampleLabels.length; i++ )
+            exampleLabelsDouble[i] = exampleLabels[i];
+
+        DataSetRow row = new DataSetRow(exampleValues, exampleLabelsDouble);
         mlp.learn(row);
     }
 
