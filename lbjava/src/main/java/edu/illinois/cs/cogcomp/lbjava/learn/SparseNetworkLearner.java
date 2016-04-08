@@ -249,10 +249,11 @@ public class SparseNetworkLearner extends Learner
   public void learn(int[] exampleFeatures, double[] exampleValues,
                     int[] exampleLabels, double[] labelValues) {
 
-//    System.out.println(exampleValues.length);
-//    System.out.println(Arrays.toString(exampleLabels));
-//    System.out.println(Arrays.toString(labelValues));
-//    System.out.println();
+    //System.out.println(Arrays.toString(exampleFeatures));
+    //System.out.println(Arrays.toString(exampleValues));
+    //System.out.println(Arrays.toString(exampleLabels));
+    //System.out.println(Arrays.toString(labelValues));
+    //System.out.println();
 
     int label = exampleLabels[0];
     int N = network.size();

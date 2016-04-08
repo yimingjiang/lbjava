@@ -21,12 +21,18 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
     private int[] hiddenLayersA;
 
     private void initialize(int featureDimension) {
+        // hard coding
+        learningRateA = 0.2;
+        hiddenLayersA = new int[] {18};
+
         int[] layers = new int[2+hiddenLayersA.length];
         layers[0] = featureDimension;
         for (int i = 1; i < layers.length-1; i++) {
             layers[i] = hiddenLayersA[i-1];
         }
         layers[layers.length-1] = 1;
+
+        System.out.println(Arrays.toString(layers));
 
         mlp = new org.neuroph.nnet.MultiLayerPerceptron(layers);
 
@@ -78,7 +84,7 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
      */
     @Override
     public Feature featureValue(int[] f, double[] v) {
-        int index = score(f, v) >= 0 ? 0 : 1;
+        int index = score(f, v) >= 0.5 ? 1 : 0;
         return predictions.get(index);
     }
 
@@ -87,6 +93,7 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         mlp.setInput(row.getInput());
         mlp.calculate();
         double[] networkOutput = mlp.getOutput();
+        System.out.println(networkOutput[0]);
         return networkOutput[0];
     }
 
@@ -132,10 +139,10 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
      * discrete classification value is associated with the given
      * example object.
      **/
-    @Override
-    public ScoreSet scores(int[] exampleFeatures, double[] exampleValues) {
-        return null;
-    }
+//    @Override
+//    public ScoreSet scores(int[] exampleFeatures, double[] exampleValues) {
+//        return null;
+//    }
 
     /**
      * Writes the learned function's internal representation as text.
