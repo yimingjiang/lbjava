@@ -17,13 +17,50 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
     private org.neuroph.nnet.MultiLayerPerceptron mlp;
     private MomentumBackpropagation learningRule;
 
+    private static final double defaultLearningRate = 0.1;
+    private static final int[] defaultHiddenLayers = {};
+
     private double learningRateA;
     private int[] hiddenLayersA;
 
+    public MultiLayerPerceptron() {
+        this("");
+    }
+
+    private MultiLayerPerceptron(String n) {
+        this(n, defaultLearningRate);
+    }
+
+    private MultiLayerPerceptron(String n, double learningRate) {
+        this(n, learningRate, defaultHiddenLayers);
+    }
+
+    private MultiLayerPerceptron(String n, double learningRate, int[] hiddenLayers) {
+        super(n);
+        Parameters p = new Parameters();
+        p.learningRateP = learningRate;
+        p.hiddenLayersP = hiddenLayers;
+        setParameters(p);
+    }
+
+    public MultiLayerPerceptron(Parameters p) {
+        this("", p);
+    }
+
+    private MultiLayerPerceptron(String n, Parameters p) {
+        super(n);
+        setParameters(p);
+    }
+
+    public void setParameters(Parameters p) {
+        learningRateA = p.learningRateP;
+        hiddenLayersA = p.hiddenLayersP;
+    }
+
     private void initialize(int featureDimension) {
         // hard coding
-        learningRateA = 0.2;
-        hiddenLayersA = new int[] {18};
+//        learningRateA = 0.2;
+//        hiddenLayersA = new int[] {18};
 
         int[] layers = new int[2+hiddenLayersA.length];
         layers[0] = featureDimension;
@@ -32,7 +69,7 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         }
         layers[layers.length-1] = 1;
 
-        System.out.println(Arrays.toString(layers));
+        //System.out.println(Arrays.toString(layers));
 
         mlp = new org.neuroph.nnet.MultiLayerPerceptron(layers);
 
