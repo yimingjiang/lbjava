@@ -17,11 +17,15 @@ public class MLPMain {
         MLPClassifier mlpClassifier = new MLPClassifier();
         SparseNetworkLearner.Parameters snp = new SparseNetworkLearner.Parameters();
         MultiLayerPerceptron mlp = new MultiLayerPerceptron();
+        MultiLayerPerceptron.Parameters p = new MultiLayerPerceptron.Parameters();
+        p.learningRateP = 0.2;
+        p.hiddenLayersP = new int[] {18};
+        mlp.setParameters(p);
         snp.baseLTU = mlp;
         mlpClassifier.setParameters(snp);
 
         BatchTrainer trainer = new BatchTrainer(mlpClassifier, d);
-        trainer.train(1000);
+        trainer.train(180);
 
         Classifier oracle = new LenseLabel();
         TestDiscrete.testDiscrete(new TestDiscrete(), mlpClassifier, oracle, d, true, 20);
