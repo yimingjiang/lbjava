@@ -128,7 +128,6 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         mlp.setInput(row.getInput());
         mlp.calculate();
         double[] networkOutput = mlp.getOutput();
-        System.out.println(networkOutput[0]);
         return networkOutput[0];
     }
 
