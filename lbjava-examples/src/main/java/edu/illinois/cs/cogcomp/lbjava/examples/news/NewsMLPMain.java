@@ -23,7 +23,7 @@ public class NewsMLPMain {
         sn.setParameters(snp);
 
         BatchTrainer trainer = new BatchTrainer(sn, trainingDataSet);
-        trainer.train(40);
+        trainer.train(1);
 
         NewsgroupParser testingDataSet = new NewsgroupParser(System.getProperty("user.dir")+"/data/20news.test");
 

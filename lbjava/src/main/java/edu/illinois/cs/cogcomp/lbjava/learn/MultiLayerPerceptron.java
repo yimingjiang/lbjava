@@ -32,6 +32,7 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
     private int[] hiddenLayersA;
 
     private int currentMaxIndex = 0;
+    private int count = 0;
 
     public MultiLayerPerceptron() {
         this("");
@@ -76,6 +77,8 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
                 currentMaxIndex = eachIndex;
             }
         }
+
+        //System.out.println("Initialize, currentMaxIndex: " + currentMaxIndex);
 
         layersCountList[0] = currentMaxIndex + 1;
 
@@ -137,6 +140,13 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
      **/
     @Override
     public void learn(int[] exampleFeatures, double[] exampleValues, int[] exampleLabels, double[] labelValues) {
+//        System.out.println(Arrays.toString(exampleFeatures));
+//        System.out.println(Arrays.toString(exampleValues));
+//        System.out.println(Arrays.toString(exampleLabels));
+//        System.out.println(Arrays.toString(labelValues));
+//        System.out.println();
+        count ++;
+
         if (isFirstTime) {
             initialize(exampleFeatures);
             isFirstTime = false;
@@ -144,6 +154,8 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         else {
             addMoreInputNeurons(exampleFeatures);
         }
+
+        //System.out.println("[" + count + "] : " + currentMaxIndex);
 
         double[] exampleLabelArray = new double[exampleLabels.length];
         for(int i = 0; i < exampleLabels.length; i++ ) {
@@ -186,7 +198,9 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
     }
 
     public double score(int[] exampleFeatures, double[] exampleValues) {
-        DataSetRow row = new DataSetRow(exampleValues);
+        //System.out.println("Testing. " + currentMaxIndex);
+        double[] exampleFeaturesArray = createExampleFeatureArray(exampleFeatures, exampleValues);
+        DataSetRow row = new DataSetRow(exampleFeaturesArray);
         mlp.setInput(row.getInput());
         mlp.calculate();
         double[] networkOutput = mlp.getOutput();
