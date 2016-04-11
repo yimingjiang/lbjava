@@ -1,0 +1,20 @@
+package edu.illinois.cs.cogcomp.lbjava.examples.brown;
+
+import java.util.List;
+
+discrete[] SpellingFeatures(SpellingData d) <- {
+    for (int i = 0; i < d.getFeatures().size(); i++) {
+        sense d.getFeatures().get(i);
+    }
+}
+
+discrete SpellingLabel(SpellingData d) <- {
+    return d.getLabel();
+}
+
+discrete BrownClassifier(SpellingData d) <-
+    learn SpellingLabel
+    using SpellingFeatures
+
+    with SparseNetworkLearner {}
+end

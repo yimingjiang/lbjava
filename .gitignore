@@ -69,3 +69,6 @@ lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/news/Spars
 lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/lense/LenseFeatures.java
 lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/lense/LenseLabel.java
 lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/lense/MLPClassifier.java
+lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/brown/SpellingFeatures.java
+lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/brown/SpellingLabel.java
+lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/brown/BrownClassifier.java
