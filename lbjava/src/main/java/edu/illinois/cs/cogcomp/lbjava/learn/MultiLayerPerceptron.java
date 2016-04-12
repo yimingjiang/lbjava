@@ -19,7 +19,7 @@ import org.neuroph.util.random.WeightsRandomizer;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-public class MultiLayerPerceptron extends LinearThresholdUnit{
+public class MultiLayerPerceptron extends Learner{
 
     private boolean isFirstTime = true;
 
@@ -39,15 +39,15 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         this("");
     }
 
-    private MultiLayerPerceptron(String n) {
+    public MultiLayerPerceptron(String n) {
         this(n, defaultLearningRate);
     }
 
-    private MultiLayerPerceptron(String n, double learningRate) {
+    public MultiLayerPerceptron(String n, double learningRate) {
         this(n, learningRate, defaultHiddenLayers);
     }
 
-    private MultiLayerPerceptron(String n, double learningRate, int[] hiddenLayers) {
+    public MultiLayerPerceptron(String n, double learningRate, int[] hiddenLayers) {
         super(n);
         Parameters p = new Parameters();
         p.learningRateP = learningRate;
@@ -59,7 +59,7 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         this("", p);
     }
 
-    private MultiLayerPerceptron(String n, Parameters p) {
+    public MultiLayerPerceptron(String n, Parameters p) {
         super(n);
         setParameters(p);
     }
@@ -170,15 +170,6 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         return labelVector;
     }
 
-    /**
-     * Trains the learning algorithm given an example formatted as
-     * arrays of feature indices, their values, and the example labels.
-     *
-     * @param exampleFeatures The example's array of feature indices.
-     * @param exampleValues   The example's array of feature values.
-     * @param exampleLabels   The example's label(s).
-     * @param labelValues     The values of the labels.
-     **/
     @Override
     public void learn(int[] exampleFeatures, double[] exampleValues, int[] exampleLabels, double[] labelValues) {
 //        System.out.println(Arrays.toString(exampleFeatures));
@@ -204,28 +195,11 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         mlp.learn(row);
     }
 
-    /**
-     * This method makes one or more decisions about a single object, returning
-     * those decisions as features in a vector.
-     *
-     * @param exampleFeatures The example's array of feature indices.
-     * @param exampleValues   The example's array of feature values.
-     * @return A vector of features about the input object.
-     **/
     @Override
     public FeatureVector classify(int[] exampleFeatures, double[] exampleValues) {
         return new FeatureVector(featureValue(exampleFeatures, exampleValues));
     }
 
-    /**
-     * Classify into two categories,
-     * if >= 0, predict positive
-     * if <  0, predict negative
-     *
-     * @param f  The features array.
-     * @param v  The values array.
-     * @return feature
-     */
     @Override
     public Feature featureValue(int[] f, double[] v) {
         int index = score(f, v) >= 0.5 ? 1 : 0;
@@ -241,58 +215,11 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         return networkOutput[0];
     }
 
-
-    /**
-     * If the <code>LinearThresholdUnit</code> is mistake driven, this method
-     * should be overridden and used to update the internal representation when
-     * a mistake is made on a positive example.
-     *
-     * @param exampleFeatures The example's array of feature indices
-     * @param exampleValues   The example's array of feature values
-     * @param rate            The learning rate at which the weights are updated.
-     **/
-    @Override
-    public void promote(int[] exampleFeatures, double[] exampleValues, double rate) {
-        System.out.println("MLP promote function!");
-    }
-
-    /**
-     * If the <code>LinearThresholdUnit</code> is mistake driven, this method
-     * should be overridden and used to update the internal representation when
-     * a mistake is made on a negative example.
-     *
-     * @param exampleFeatures The example's array of feature indices
-     * @param exampleValues   The example's array of feature values
-     * @param rate            The learning rate at which the weights are updated.
-     **/
-    @Override
-    public void demote(int[] exampleFeatures, double[] exampleValues, double rate) {
-        System.out.println("MLP demote function");
-    }
-
-    /**
-     * Produces a set of scores indicating the degree to which each possible
-     * discrete classification value is associated with the given example
-     * object.  Learners that return a <code>real</code> feature or more than
-     * one feature may implement this method by simply returning
-     * <code>null</code>.
-     *
-     * @param exampleFeatures The example's array of feature indices
-     * @param exampleValues   The example's array of values
-     * @return A set of scores indicating the degree to which each possible
-     * discrete classification value is associated with the given
-     * example object.
-     **/
     @Override
     public ScoreSet scores(int[] exampleFeatures, double[] exampleValues) {
         return null;
     }
 
-    /**
-     * Writes the learned function's internal representation as text.
-     *
-     * @param out The output stream.
-     **/
     @Override
     public void write(PrintStream out) {
 

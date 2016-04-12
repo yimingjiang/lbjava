@@ -15,19 +15,15 @@ public class MLPMain {
         MyDataReader d = new MyDataReader(System.getProperty("user.dir")+"/data/lense/data.txt");
 
         MLPClassifier mlpClassifier = new MLPClassifier();
-        SparseNetworkLearner.Parameters snp = new SparseNetworkLearner.Parameters();
-        MultiLayerPerceptron mlp = new MultiLayerPerceptron();
         MultiLayerPerceptron.Parameters p = new MultiLayerPerceptron.Parameters();
         p.learningRateP = 0.2;
         p.hiddenLayersP = new int[] {18};
-        mlp.setParameters(p);
-        snp.baseLTU = mlp;
-        mlpClassifier.setParameters(snp);
+        mlpClassifier.setParameters(p);
 
         BatchTrainer trainer = new BatchTrainer(mlpClassifier, d);
-        trainer.train(180);
+        trainer.train(1);
 
-        Classifier oracle = new LenseLabel();
-        TestDiscrete.testDiscrete(new TestDiscrete(), mlpClassifier, oracle, d, true, 20);
+//        Classifier oracle = new LenseLabel();
+//        TestDiscrete.testDiscrete(new TestDiscrete(), mlpClassifier, oracle, d, true, 20);
     }
 }

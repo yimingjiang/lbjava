@@ -19,5 +19,5 @@ discrete MLPClassifier(MyData d) <-
     learn LenseLabel
     using LenseFeatures
 
-    with SparseNetworkLearner {}
+    with MultiLayerPerceptron {}
 end
