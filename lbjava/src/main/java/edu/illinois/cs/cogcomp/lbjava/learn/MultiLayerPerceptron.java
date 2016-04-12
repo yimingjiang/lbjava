@@ -5,18 +5,19 @@ import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
 import edu.illinois.cs.cogcomp.lbjava.classify.ScoreSet;
 import org.neuroph.core.Neuron;
 import org.neuroph.core.data.DataSetRow;
+import org.neuroph.core.input.WeightedSum;
 import org.neuroph.core.transfer.Linear;
 import org.neuroph.nnet.comp.neuron.InputNeuron;
 import org.neuroph.nnet.learning.MomentumBackpropagation;
 import org.neuroph.util.ConnectionFactory;
 import org.neuroph.util.NeuronFactory;
 import org.neuroph.util.NeuronProperties;
+import org.neuroph.util.TransferFunctionType;
 import org.neuroph.util.random.RangeRandomizer;
 import org.neuroph.util.random.WeightsRandomizer;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MultiLayerPerceptron extends LinearThresholdUnit{
 
@@ -32,7 +33,7 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
     private int[] hiddenLayersA;
 
     private int currentMaxIndex = 0;
-    private int count = 0;
+    private ArrayList<Integer> labelsList;
 
     public MultiLayerPerceptron() {
         this("");
@@ -68,17 +69,15 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         hiddenLayersA = p.hiddenLayersP;
     }
 
-    private void initialize(int[] exampleIndices) {
+    private void initialize(int[] featuresIndices, int[] labelsIndices) {
         int[] layersCountList = new int[2+hiddenLayersA.length];
 
         // find max index in first example
-        for (int eachIndex : exampleIndices) {
+        for (int eachIndex : featuresIndices) {
             if (eachIndex > currentMaxIndex) {
                 currentMaxIndex = eachIndex;
             }
         }
-
-        //System.out.println("Initialize, currentMaxIndex: " + currentMaxIndex);
 
         layersCountList[0] = currentMaxIndex + 1;
 
@@ -89,6 +88,9 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
 
         learningRule = new MomentumBackpropagation();
         learningRule.setLearningRate(learningRateA);
+
+        labelsList = new ArrayList<>();
+        labelsList.add(labelsIndices[0]);
     }
 
     private void addMoreInputNeurons(int[] exampleIndices) {
@@ -116,10 +118,36 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
             mlp.addNeuronToInputNeurons(neuron);
             randomizer.randomize(neuron);
         }
-
     }
 
-    private double[] createExampleFeatureArray(int[] exampleIndices, double[] exampleValues) {
+    private void addMoreOutputNeurons(int[] labelIndices, double[] labelValues) {
+        for (int i = 0; i < labelsList.size(); i++) {
+            if (labelIndices[0] == labelsList.get(i)) {
+                return;
+            }
+        }
+
+        // need to add the new label
+        labelsList.add(labelIndices[0]);
+
+        // create new output neuron
+        NeuronProperties neuronProperties = new NeuronProperties();
+        neuronProperties.setProperty("useBias", true);
+        neuronProperties.setProperty("transferFunction", TransferFunctionType.SIGMOID);
+        neuronProperties.setProperty("inputFunction", WeightedSum.class);
+
+        Neuron neuron = NeuronFactory.createNeuron(neuronProperties);
+
+        // connect new output neuron to every neuron in the previous layer
+        ConnectionFactory.createConnection(mlp.getLayerAt(mlp.getLayersCount()-1), neuron);
+
+        mlp.addNeuronToOutputNeurons(neuron);
+
+        WeightsRandomizer randomizer = new RangeRandomizer(-0.7, 0.7);
+        randomizer.randomize(neuron);
+    }
+
+    private double[] createFeaturesArray(int[] exampleIndices, double[] exampleValues) {
         double[] featureVector = new double[currentMaxIndex+1];
 
         for (int i = 0; i < exampleIndices.length; i++) {
@@ -127,6 +155,19 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
         }
 
         return featureVector;
+    }
+
+    private double[] createLabelsArray(int[] labelIndices) {
+        int dimension = labelsList.size();
+        double[] labelVector = new double[dimension];
+
+        for (int i = 0; i < dimension; i++) {
+            if (labelIndices[0] == labelsList.get(i)) {
+                labelVector[i] = 1;
+            }
+        }
+
+        return labelVector;
     }
 
     /**
@@ -145,26 +186,20 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
 //        System.out.println(Arrays.toString(exampleLabels));
 //        System.out.println(Arrays.toString(labelValues));
 //        System.out.println();
-        count ++;
 
         if (isFirstTime) {
-            initialize(exampleFeatures);
+            initialize(exampleFeatures, exampleLabels);
             isFirstTime = false;
         }
         else {
             addMoreInputNeurons(exampleFeatures);
+            addMoreOutputNeurons(exampleLabels, labelValues);
         }
 
-        //System.out.println("[" + count + "] : " + currentMaxIndex);
+        double[] featuresArray = createFeaturesArray(exampleFeatures, exampleValues);
+        double[] labelsArray = createLabelsArray(exampleLabels);
 
-        double[] exampleLabelArray = new double[exampleLabels.length];
-        for(int i = 0; i < exampleLabels.length; i++ ) {
-            exampleLabelArray[i] = exampleLabels[i];
-        }
-
-        double[] exampleFeaturesArray = createExampleFeatureArray(exampleFeatures, exampleValues);
-
-        DataSetRow row = new DataSetRow(exampleFeaturesArray, exampleLabelArray);
+        DataSetRow row = new DataSetRow(featuresArray, labelsArray);
 
         mlp.learn(row);
     }
@@ -198,8 +233,7 @@ public class MultiLayerPerceptron extends LinearThresholdUnit{
     }
 
     public double score(int[] exampleFeatures, double[] exampleValues) {
-        //System.out.println("Testing. " + currentMaxIndex);
-        double[] exampleFeaturesArray = createExampleFeatureArray(exampleFeatures, exampleValues);
+        double[] exampleFeaturesArray = createFeaturesArray(exampleFeatures, exampleValues);
         DataSetRow row = new DataSetRow(exampleFeaturesArray);
         mlp.setInput(row.getInput());
         mlp.calculate();

@@ -521,6 +521,11 @@ public class NeuralNetwork<L extends LearningRule> implements Serializable {
         this.output = new double[outputNeurons.length];
     }
 
+    public void addNeuronToOutputNeurons(Neuron neuron) {
+        this.outputNeurons.add(neuron);
+        this.output = new double[this.outputNeurons.size()];
+    }
+
     /**
      * Sets labels for output neurons
      *

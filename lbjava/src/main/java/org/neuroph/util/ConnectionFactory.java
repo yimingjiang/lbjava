@@ -77,7 +77,7 @@ import org.neuroph.nnet.comp.neuron.BiasNeuron;
 	}
         
         
-        /**
+	/**
 	 * Creates  connectivity between specified neuron and all neurons in specified layer
 	 * 
 	 * @param fromNeuron
@@ -86,11 +86,16 @@ import org.neuroph.nnet.comp.neuron.BiasNeuron;
 	 *            layer to connect to
 	 */        
 	public static void createConnection(Neuron fromNeuron, Layer toLayer) {
-                for (Neuron toNeuron : toLayer.getNeurons()) {
-                    ConnectionFactory.createConnection(fromNeuron, toNeuron);
-                }
+		for (Neuron toNeuron : toLayer.getNeurons()) {
+			ConnectionFactory.createConnection(fromNeuron, toNeuron);
+		}
 	}
-        
+
+	public static void createConnection(Layer fromLayer, Neuron toNeuron) {
+		for (Neuron fromNeuron: fromLayer.getNeurons()) {
+            ConnectionFactory.createConnection(fromNeuron, toNeuron);
+        }
+	}
 
 	/**
 	 * Creates full connectivity between the two specified layers
