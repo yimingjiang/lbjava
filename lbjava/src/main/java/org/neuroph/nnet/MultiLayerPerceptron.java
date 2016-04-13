@@ -183,4 +183,22 @@ public class MultiLayerPerceptron extends NeuralNetwork<BackPropagation> {
         ConnectionFactory.fullConnect(getLayerAt(0), getLayerAt(getLayersCount() - 1), false);
     }
 
+    public String toString() {
+        String out = "";
+        out += "Number of layers: " + this.getLayersCount() +"\n";
+        for (int i = 0; i < this.getLayersCount(); i++) {
+            out += String.format("\tAt layer [%d], number of neurons: %d\n", i, this.getLayerAt(i).getNeuronsCount());
+            for (int j  = 0; j < this.getLayerAt(i).getNeuronsCount(); j++) {
+                out += String.format("\t\tID[%d], Layer[%d], Neuron[%d], number of input connections: %d, number of output connections: %d\n", this.getLayerAt(i).getNeuronAt(j).hashCode(), i, j,
+                        this.getLayerAt(i).getNeuronAt(j).getInputConnections().length,
+                        this.getLayerAt(i).getNeuronAt(j).getOutConnections().length);
+            }
+        }
+        out += "Input Layer: ";
+        out += String.format("%d neurons\n", this.getLayerAt(0).getNeuronsCount());
+        out += "Output Layer: ";
+        out += String.format("%d neurons\n", this.getLayerAt(this.getLayersCount()-1).getNeuronsCount());
+        return out;
+    }
+
 }

@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.lbjava.learn;
 import edu.illinois.cs.cogcomp.lbjava.classify.Feature;
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
 import edu.illinois.cs.cogcomp.lbjava.classify.ScoreSet;
+import org.neuroph.core.Connection;
 import org.neuroph.core.Neuron;
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.core.input.WeightedSum;
@@ -18,6 +19,7 @@ import org.neuroph.util.random.WeightsRandomizer;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MultiLayerPerceptron extends Learner{
 
@@ -117,6 +119,8 @@ public class MultiLayerPerceptron extends Learner{
 
             mlp.addNeuronToInputNeurons(neuron);
             randomizer.randomize(neuron);
+
+            // TODO: add new neuron to the input layer
         }
     }
 
@@ -139,12 +143,20 @@ public class MultiLayerPerceptron extends Learner{
         Neuron neuron = NeuronFactory.createNeuron(neuronProperties);
 
         // connect new output neuron to every neuron in the previous layer
-        ConnectionFactory.createConnection(mlp.getLayerAt(mlp.getLayersCount()-1), neuron);
+        ConnectionFactory.createConnection(mlp.getLayerAt(mlp.getLayersCount()-2), neuron);
 
         mlp.addNeuronToOutputNeurons(neuron);
 
         WeightsRandomizer randomizer = new RangeRandomizer(-0.7, 0.7);
         randomizer.randomize(neuron);
+
+        // add new neuron to the output layer
+        mlp.getLayerAt(mlp.getLayersCount()-1).addNeuron(neuron);
+
+        // instantiate trainingData for new neuron
+        for (Connection connection : neuron.getInputConnections()) {
+            connection.getWeight().setTrainingData(new MomentumBackpropagation.MomentumWeightTrainingData());
+        }
     }
 
     private double[] createFeaturesArray(int[] exampleIndices, double[] exampleValues) {
@@ -192,7 +204,11 @@ public class MultiLayerPerceptron extends Learner{
 
         DataSetRow row = new DataSetRow(featuresArray, labelsArray);
 
+        //System.out.println(labelsList.toString());
+        System.out.println(mlp.toString());
+
         mlp.learn(row);
+
     }
 
     @Override

@@ -131,23 +131,20 @@ public class Weight implements java.io.Serializable {
             this.value = min + Math.random() * (max - min);
 	}
         
-        public void randomize(Random generator) {
+	public void randomize(Random generator) {
           this.value = generator.nextDouble();  
-        } 
-
-
-        /**
-         * Returns training data buffer for this weight
-         * @return training data buffer for this weight
-         */
-        public Object getTrainingData() {
-            return trainingData;
         }
 
-        public void setTrainingData(Object trainingData) {
+	/**
+	 * Returns training data buffer for this weight
+	 * @return training data buffer for this weight
+	 */
+	public Object getTrainingData() {
+		return trainingData;
+	}
+
+	public void setTrainingData(Object trainingData) {
             this.trainingData = trainingData;
         }
-        
-        
 
 }
