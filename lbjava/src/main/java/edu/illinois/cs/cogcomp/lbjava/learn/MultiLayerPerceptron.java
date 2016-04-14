@@ -189,11 +189,11 @@ public class MultiLayerPerceptron extends Learner{
 
     @Override
     public void learn(int[] exampleFeatures, double[] exampleValues, int[] exampleLabels, double[] labelValues) {
-//        System.out.println(Arrays.toString(exampleFeatures));
-//        System.out.println(Arrays.toString(exampleValues));
-//        System.out.println(Arrays.toString(exampleLabels));
-//        System.out.println(Arrays.toString(labelValues));
-//        System.out.println();
+        System.out.println(Arrays.toString(exampleFeatures));
+        System.out.println(Arrays.toString(exampleValues));
+        System.out.println(Arrays.toString(exampleLabels));
+        System.out.println(Arrays.toString(labelValues));
+        System.out.println();
 
         if (isFirstTime) {
             initialize(exampleFeatures, exampleLabels);
@@ -212,7 +212,7 @@ public class MultiLayerPerceptron extends Learner{
         //System.out.println(labelsList.toString());
         //System.out.println(mlp.toString());
 
-        mlp.learn(row);
+        //mlp.learn(row);
     }
 
     @Override

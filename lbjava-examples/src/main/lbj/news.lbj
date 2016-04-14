@@ -18,10 +18,10 @@ discrete NewsgroupLabel(Post post) <- {
     return post.getNewsgroup();
 }
 
-discrete SparseNetworkClassifier(Post post) <-
+discrete NewsMLPClassifier(Post post) <-
     learn NewsgroupLabel
     using BagOfWords
 
-    with SparseNetworkLearner {}
+    with MultiLayerPerceptron {}
 
 end
