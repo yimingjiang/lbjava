@@ -20,6 +20,7 @@ import org.neuroph.util.random.WeightsRandomizer;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class MultiLayerPerceptron extends Learner{
 
@@ -34,7 +35,9 @@ public class MultiLayerPerceptron extends Learner{
     private double learningRateA;
     private int[] hiddenLayersA;
 
-    private int currentMaxIndex = 0;
+    //private int currentMaxIndex = 0;
+
+    private HashMap<Integer, Integer> featuresMap;
     private ArrayList<Integer> labelsList;
 
     public MultiLayerPerceptron() {
@@ -72,16 +75,18 @@ public class MultiLayerPerceptron extends Learner{
     }
 
     private void initialize(int[] featuresIndices, int[] labelsIndices) {
-        int[] layersCountList = new int[2+hiddenLayersA.length];
+        // initialize feature hash map
+        featuresMap = new HashMap<>();
 
-        // find max index in first example
-        for (int eachIndex : featuresIndices) {
-            if (eachIndex > currentMaxIndex) {
-                currentMaxIndex = eachIndex;
-            }
+        // add feature index to the hash map
+        for (int i = 0; i < featuresIndices.length; i++) {
+            featuresMap.put(featuresIndices[i], 1);
         }
 
-        layersCountList[0] = currentMaxIndex + 1;
+        // construct layer count list
+        int[] layersCountList = new int[2+hiddenLayersA.length];
+
+        layersCountList[0] = featuresIndices.length;
 
         System.arraycopy(hiddenLayersA, 0, layersCountList, 1, layersCountList.length - 1 - 1);
         layersCountList[layersCountList.length-1] = 1;
@@ -95,33 +100,33 @@ public class MultiLayerPerceptron extends Learner{
         labelsList.add(labelsIndices[0]);
     }
 
-    private void addMoreInputNeurons(int[] exampleIndices) {
-        int prevMaxIndex = currentMaxIndex;
+    private void addMoreInputNeurons(int[] featuresIndices) {
+        WeightsRandomizer randomizer = new RangeRandomizer(-0.7, 0.7);
 
-        for (int eachIndex : exampleIndices) {
-            if (eachIndex > currentMaxIndex) {
-                currentMaxIndex = eachIndex;
+        // iterate through features indices and find newer ones
+        for (int i = 0; i < featuresIndices.length; i++) {
+            if (!featuresMap.containsKey(featuresIndices[i])) {
+                featuresMap.put(featuresIndices[i], 1);
+
+                NeuronProperties inputNeuronProperties = new NeuronProperties(InputNeuron.class, Linear.class);
+                Neuron neuron = NeuronFactory.createNeuron(inputNeuronProperties);
+
+                // connect the new neuron to all neurons in layer[1]
+                ConnectionFactory.createConnection(neuron, mlp.getLayerAt(1));
+
+                mlp.addNeuronToInputNeurons(neuron);
+                randomizer.randomize(neuron);
+
+                // add new neuron to the input layer
+                mlp.getLayerAt(0).addNeuron(neuron);
+
+                // instantiate trainingData for new connections
+                for (Connection connection : neuron.getOutConnections()) {
+                    connection.getWeight().setTrainingData(new MomentumBackpropagation.MomentumWeightTrainingData());
+                }
             }
         }
 
-        if (prevMaxIndex == currentMaxIndex) {
-            return;
-        }
-
-        WeightsRandomizer randomizer = new RangeRandomizer(-0.7, 0.7);
-
-        for (int i = 0; i < (currentMaxIndex-prevMaxIndex); i++) {
-            NeuronProperties inputNeuronProperties = new NeuronProperties(InputNeuron.class, Linear.class);
-            Neuron neuron = NeuronFactory.createNeuron(inputNeuronProperties);
-
-            // connect the new neuron to all neurons in layer[1]
-            ConnectionFactory.createConnection(neuron, mlp.getLayerAt(1));
-
-            mlp.addNeuronToInputNeurons(neuron);
-            randomizer.randomize(neuron);
-
-            // TODO: add new neuron to the input layer
-        }
     }
 
     private void addMoreOutputNeurons(int[] labelIndices, double[] labelValues) {
@@ -160,7 +165,7 @@ public class MultiLayerPerceptron extends Learner{
     }
 
     private double[] createFeaturesArray(int[] exampleIndices, double[] exampleValues) {
-        double[] featureVector = new double[currentMaxIndex+1];
+        double[] featureVector = new double[featuresMap.size()];
 
         for (int i = 0; i < exampleIndices.length; i++) {
             featureVector[exampleIndices[i]] = exampleValues[i];
@@ -208,7 +213,6 @@ public class MultiLayerPerceptron extends Learner{
         //System.out.println(mlp.toString());
 
         mlp.learn(row);
-
     }
 
     @Override
@@ -241,10 +245,10 @@ public class MultiLayerPerceptron extends Learner{
             }
         }
 
-        System.out.println("Invalid ouput!!!");
-        System.exit(-1);
+        System.out.println("************** Invalid ouput!!!");
+//        System.exit(-1);
 
-        return -1;
+        return 0;
     }
 
     @Override
