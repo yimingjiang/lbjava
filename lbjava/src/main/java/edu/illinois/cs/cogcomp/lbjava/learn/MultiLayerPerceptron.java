@@ -205,7 +205,7 @@ public class MultiLayerPerceptron extends Learner{
         DataSetRow row = new DataSetRow(featuresArray, labelsArray);
 
         //System.out.println(labelsList.toString());
-        System.out.println(mlp.toString());
+        //System.out.println(mlp.toString());
 
         mlp.learn(row);
 
@@ -218,17 +218,33 @@ public class MultiLayerPerceptron extends Learner{
 
     @Override
     public Feature featureValue(int[] f, double[] v) {
-        int index = score(f, v) >= 0.5 ? 1 : 0;
+        int index = findLabelIndex(f, v);
         return predictions.get(index);
     }
 
-    public double score(int[] exampleFeatures, double[] exampleValues) {
+    private int findLabelIndex(int[] exampleFeatures, double[] exampleValues) {
         double[] exampleFeaturesArray = createFeaturesArray(exampleFeatures, exampleValues);
         DataSetRow row = new DataSetRow(exampleFeaturesArray);
         mlp.setInput(row.getInput());
         mlp.calculate();
         double[] networkOutput = mlp.getOutput();
-        return networkOutput[0];
+
+//        double[] cleanOutput = new double[networkOutput.length];
+//
+//        for (int i = 0; i < networkOutput.length; i++) {
+//            cleanOutput[i] = networkOutput[i] >= 0.5 ? 1 : 0;
+//        }
+
+        for (int i = 0; i < networkOutput.length; i++) {
+            if (networkOutput[i] >= 0.5) {
+                return i;
+            }
+        }
+
+        System.out.println("Invalid ouput!!!");
+        System.exit(-1);
+
+        return -1;
     }
 
     @Override

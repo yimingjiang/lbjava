@@ -16,5 +16,5 @@ discrete BrownClassifier(SpellingData d) <-
     learn SpellingLabel
     using SpellingFeatures
 
-    with SparseNetworkLearner {}
+    with MultiLayerPerceptron {}
 end

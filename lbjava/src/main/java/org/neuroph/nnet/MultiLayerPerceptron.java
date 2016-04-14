@@ -184,14 +184,18 @@ public class MultiLayerPerceptron extends NeuralNetwork<BackPropagation> {
     }
 
     public String toString() {
-        String out = "";
+        String out = "===================================================\n";
         out += "Number of layers: " + this.getLayersCount() +"\n";
         for (int i = 0; i < this.getLayersCount(); i++) {
             out += String.format("\tAt layer [%d], number of neurons: %d\n", i, this.getLayerAt(i).getNeuronsCount());
             for (int j  = 0; j < this.getLayerAt(i).getNeuronsCount(); j++) {
-                out += String.format("\t\tID[%d], Layer[%d], Neuron[%d], number of input connections: %d, number of output connections: %d\n", this.getLayerAt(i).getNeuronAt(j).hashCode(), i, j,
+                out += String.format("\t\tID[%s], Layer[%d], Neuron[%d], number of input connections: %d, number of output connections: %d, %s\n",
+                        Integer.toHexString(this.getLayerAt(i).getNeuronAt(j).hashCode()),
+                        i,
+                        j,
                         this.getLayerAt(i).getNeuronAt(j).getInputConnections().length,
-                        this.getLayerAt(i).getNeuronAt(j).getOutConnections().length);
+                        this.getLayerAt(i).getNeuronAt(j).getOutConnections().length,
+                        (this.getLayerAt(i).getNeuronAt(j) instanceof BiasNeuron) ? "Bias Neuron" : "");
             }
         }
         out += "Input Layer: ";

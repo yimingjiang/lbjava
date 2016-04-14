@@ -21,9 +21,9 @@ public class MLPMain {
         mlpClassifier.setParameters(p);
 
         BatchTrainer trainer = new BatchTrainer(mlpClassifier, d);
-        trainer.train(1);
+        trainer.train(180);
 
-//        Classifier oracle = new LenseLabel();
-//        TestDiscrete.testDiscrete(new TestDiscrete(), mlpClassifier, oracle, d, true, 20);
+        Classifier oracle = new LenseLabel();
+        TestDiscrete.testDiscrete(new TestDiscrete(), mlpClassifier, oracle, d, true, 30);
     }
 }

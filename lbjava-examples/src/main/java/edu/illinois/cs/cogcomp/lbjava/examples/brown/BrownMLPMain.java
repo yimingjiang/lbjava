@@ -8,26 +8,22 @@ import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner;
 public class BrownMLPMain {
     public static void main(String[] args) {
 //        SpellingParser trainingDataSet =
-//                new SpellingParser(System.getProperty("user.dir")+"/data/their-brown80.feat");
+//                new SpellingParser(System.getProperty("user.dir")+"/data/their-brown-sample.feat");
 //
 //        BrownClassifier brownClassifier = new BrownClassifier();
-//        SparseNetworkLearner.Parameters snp = new SparseNetworkLearner.Parameters();
-//        MultiLayerPerceptron mlp = new MultiLayerPerceptron();
 //        MultiLayerPerceptron.Parameters p = new MultiLayerPerceptron.Parameters();
 //        p.learningRateP = 0.2;
-//        p.hiddenLayersP = new int[] {200};
-//        mlp.setParameters(p);
-//        snp.baseLTU = mlp;
-//        brownClassifier.setParameters(snp);
+//        p.hiddenLayersP = new int[] {};
+//        brownClassifier.setParameters(p);
 //
 //        BatchTrainer trainer = new BatchTrainer(brownClassifier, trainingDataSet);
-//        trainer.train(10);
+//        trainer.train(1);
 //
-//        SpellingParser testingDataSet =
-//                new SpellingParser(System.getProperty("user.dir")+"/data/their-brown20.feat");
+////        SpellingParser testingDataSet =
+////                new SpellingParser(System.getProperty("user.dir")+"/data/their-brown20.feat");
 //
 //        SpellingLabel oracle = new SpellingLabel();
 //
-//        TestDiscrete.testDiscrete(new TestDiscrete(), brownClassifier, oracle, testingDataSet, true, 20000);
+//        TestDiscrete.testDiscrete(new TestDiscrete(), brownClassifier, oracle, trainingDataSet, true, 10);
     }
 }
