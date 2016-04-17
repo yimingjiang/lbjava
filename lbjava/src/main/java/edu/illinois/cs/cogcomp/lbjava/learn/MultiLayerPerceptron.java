@@ -40,6 +40,8 @@ public class MultiLayerPerceptron extends Learner{
     private HashMap<Integer, Integer> featuresMap;
     private ArrayList<Integer> labelsList;
 
+    private int count = 0;
+
     public MultiLayerPerceptron() {
         this("");
     }
@@ -80,13 +82,15 @@ public class MultiLayerPerceptron extends Learner{
 
         // add feature index to the hash map
         for (int i = 0; i < featuresIndices.length; i++) {
-            featuresMap.put(featuresIndices[i], 1);
+            if (!featuresMap.containsKey(featuresIndices[i])) {
+                featuresMap.put(featuresIndices[i], 1);
+            }
         }
 
         // construct layer count list
         int[] layersCountList = new int[2+hiddenLayersA.length];
 
-        layersCountList[0] = featuresIndices.length;
+        layersCountList[0] = featuresMap.size();
 
         System.arraycopy(hiddenLayersA, 0, layersCountList, 1, layersCountList.length - 1 - 1);
         layersCountList[layersCountList.length-1] = 1;
@@ -165,10 +169,13 @@ public class MultiLayerPerceptron extends Learner{
     }
 
     private double[] createFeaturesArray(int[] exampleIndices, double[] exampleValues) {
-        double[] featureVector = new double[featuresMap.size()];
+        int d = featuresMap.size();
+        double[] featureVector = new double[d];
 
         for (int i = 0; i < exampleIndices.length; i++) {
-            featureVector[exampleIndices[i]] = exampleValues[i];
+            if (exampleIndices[i] < d) {
+                featureVector[exampleIndices[i]] = exampleValues[i];
+            }
         }
 
         return featureVector;
@@ -189,11 +196,11 @@ public class MultiLayerPerceptron extends Learner{
 
     @Override
     public void learn(int[] exampleFeatures, double[] exampleValues, int[] exampleLabels, double[] labelValues) {
-        System.out.println(Arrays.toString(exampleFeatures));
-        System.out.println(Arrays.toString(exampleValues));
-        System.out.println(Arrays.toString(exampleLabels));
-        System.out.println(Arrays.toString(labelValues));
-        System.out.println();
+//        System.out.println(Arrays.toString(exampleFeatures));
+//        System.out.println(Arrays.toString(exampleValues));
+//        System.out.println(Arrays.toString(exampleLabels));
+//        System.out.println(Arrays.toString(labelValues));
+//        System.out.println();
 
         if (isFirstTime) {
             initialize(exampleFeatures, exampleLabels);
@@ -204,6 +211,9 @@ public class MultiLayerPerceptron extends Learner{
             addMoreOutputNeurons(exampleLabels, labelValues);
         }
 
+        count ++;
+        System.out.printf("%d, %d\n", count, mlp.getInputsCount());
+
         double[] featuresArray = createFeaturesArray(exampleFeatures, exampleValues);
         double[] labelsArray = createLabelsArray(exampleLabels);
 
@@ -212,7 +222,7 @@ public class MultiLayerPerceptron extends Learner{
         //System.out.println(labelsList.toString());
         //System.out.println(mlp.toString());
 
-        //mlp.learn(row);
+        mlp.learn(row);
     }
 
     @Override
