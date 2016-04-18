@@ -19,6 +19,7 @@ public class RegressionMain {
         StochasticGradientDescent.Parameters p = new StochasticGradientDescent.Parameters();
         p.learningRate = Math.pow(10, -11);
         regressor.setParameters(p);
+        System.out.println(regressor.getLossFunction());
 
 
         BatchTrainer trainer = new BatchTrainer(regressor, trainingSet);
