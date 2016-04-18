@@ -87,6 +87,9 @@ public class MultiLayerPerceptron extends Learner{
             }
         }
 
+        System.out.println("Hidden Layers: ");
+        System.out.println(Arrays.toString(hiddenLayersA));
+
         // construct layer count list
         int[] layersCountList = new int[2+hiddenLayersA.length];
 
