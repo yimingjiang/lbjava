@@ -223,14 +223,20 @@ public class StochasticGradientDescent extends Learner {
         assert exampleLabels.length == 1
                 : "Example must have a single label.";
 
+        double labelValue = labelValues[0];
+        double wtx = weightVector.dot(exampleFeatures, exampleValues) + bias;
+
         if (isLMS) {
-            double labelValue = labelValues[0];
-            double multiplier =
-                    learningRate
-                            * (labelValue - weightVector.dot(exampleFeatures, exampleValues)
-                            - bias);
+            double multiplier = learningRate * (labelValue - wtx);
             weightVector.scaledAdd(exampleFeatures, exampleValues, multiplier);
             bias += multiplier;
+        }
+        else {
+            if (labelValue * wtx <= 1) {
+                double multiplier = learningRate * labelValue;
+                weightVector.scaledAdd(exampleFeatures, exampleValues, multiplier);
+                bias += multiplier;
+            }
         }
     }
 
