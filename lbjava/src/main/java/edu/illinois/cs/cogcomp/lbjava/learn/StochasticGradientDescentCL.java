@@ -1,0 +1,406 @@
+package edu.illinois.cs.cogcomp.lbjava.learn;
+
+
+import edu.illinois.cs.cogcomp.lbjava.classify.Feature;
+import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
+import edu.illinois.cs.cogcomp.lbjava.classify.RealPrimitiveStringFeature;
+import edu.illinois.cs.cogcomp.lbjava.classify.ScoreSet;
+import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessInputStream;
+import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream;
+
+import java.io.PrintStream;
+import java.util.Objects;
+
+public class StochasticGradientDescentCL extends LinearThresholdUnit {
+    /** Default value for {@link #learningRate}. */
+    public static final double defaultLearningRate = 0.1;
+    /** Default for {@link #weightVector}. */
+    public static final SparseWeightVector defaultWeightVector =
+            new SparseWeightVector();
+    public static final String defaultLossFunction = "lms";
+
+
+    /** The hypothesis vector; default {@link #defaultWeightVector}. */
+    protected SparseWeightVector weightVector;
+    /**
+     * The bias is stored here rather than as an element of the weight vector.
+     **/
+    protected double bias;
+    /**
+     * The rate at which weights are updated; default
+     * {@link #defaultLearningRate}.
+     **/
+    protected double learningRate;
+
+    protected String lossFunction;
+
+    private boolean isLMS;
+
+    /**
+     * The learning rate takes the default value, while the name of the
+     * classifier gets the empty string.
+     **/
+    public StochasticGradientDescentCL() {
+        this("");
+    }
+
+    /**
+     * Sets the learning rate to the specified value, while the name of the
+     * classifier gets the empty string.
+     *
+     * @param r  The desired learning rate value.
+     **/
+    public StochasticGradientDescentCL(double r) {
+        this("", r);
+    }
+
+    /**
+     * Initializing constructor.  Sets all member variables to their associated
+     * settings in the {@link StochasticGradientDescent.Parameters} object.
+     *
+     * @param p  The settings of all parameters.
+     **/
+    public StochasticGradientDescentCL(Parameters p) {
+        this("", p);
+    }
+
+    /**
+     * The learning rate takes the default value.
+     *
+     * @param n  The name of the classifier.
+     **/
+    public StochasticGradientDescentCL(String n) {
+        this(n, defaultLearningRate);
+    }
+
+    /**
+     * Use this constructor to specify an alternative subclass of
+     * {@link SparseWeightVector}.
+     *
+     * @param n  The name of the classifier.
+     * @param r  The desired learning rate value.
+     **/
+    public StochasticGradientDescentCL(String n, double r) {
+        super(n);
+        Parameters p = new Parameters();
+        p.learningRate = r;
+        setParameters(p);
+    }
+
+    /**
+     * Initializing constructor.  Sets all member variables to their associated
+     * settings in the {@link StochasticGradientDescent.Parameters} object.
+     *
+     * @param n  The name of the classifier.
+     * @param p  The settings of all parameters.
+     **/
+    public StochasticGradientDescentCL(String n, Parameters p) {
+        super(n);
+        setParameters(p);
+    }
+
+
+    /**
+     * Sets the values of parameters that control the behavior of this learning
+     * algorithm.
+     *
+     * @param p  The parameters.
+     **/
+    public void setParameters(Parameters p) {
+        weightVector = p.weightVector;
+        learningRate = p.learningRate;
+        lossFunction = p.lossFunction;
+        if (Objects.equals(p.lossFunction, "lms")) {
+            isLMS = true;
+        }
+        else if (Objects.equals(p.lossFunction, "hinge")) {
+            isLMS = false;
+        }
+        else {
+            System.out.println("Undefined loss function! lms or hinge");
+            System.exit(-1);
+        }
+    }
+
+
+    /**
+     * Retrieves the parameters that are set in this learner.
+     *
+     * @return An object containing all the values of the parameters that
+     *         control the behavior of this learning algorithm.
+     **/
+    public Learner.Parameters getParameters() {
+        Parameters p = new Parameters(super.getParameters());
+        p.weightVector = weightVector.emptyClone();
+        p.learningRate = learningRate;
+        return p;
+    }
+
+
+    /**
+     * Returns the current value of the {@link #learningRate} variable.
+     *
+     * @return The value of the {@link #learningRate} variable.
+     **/
+    public double getLearningRate() {
+        return learningRate;
+    }
+
+
+    /**
+     * Sets the {@link #learningRate} member variable to the specified
+     * value.
+     *
+     * @param t  The new value for {@link #learningRate}.
+     **/
+    public void setLearningRate(double t) {
+        learningRate = t;
+    }
+
+    public String getLossFunction() {
+        return lossFunction;
+    }
+
+
+    /** Resets the weight vector to all zeros. */
+    public void forget() {
+        super.forget();
+        weightVector = weightVector.emptyClone();
+        bias = 0;
+    }
+
+    @Override
+    public void promote(int[] exampleFeatures, double[] exampleValues, double rate) {
+
+    }
+
+    @Override
+    public void demote(int[] exampleFeatures, double[] exampleValues, double rate) {
+
+    }
+
+
+    /**
+     * Trains the learning algorithm given an object as an example.
+     *
+     * @param exampleFeatures  The example's array of feature indices.
+     * @param exampleValues    The example's array of feature values.
+     * @param exampleLabels    The example's label(s).
+     * @param labelValues      The labels' values.
+     **/
+    public void learn(int[] exampleFeatures, double[] exampleValues,
+                      int[] exampleLabels, double[] labelValues) {
+        assert exampleLabels.length == 1
+                : "Example must have a single label.";
+
+        double labelValue = 1;
+        if (exampleLabels[0] == 1) {
+            labelValue = 1;
+        }
+        else if (exampleLabels[0] == 0) {
+            labelValue = -1;
+        }
+
+        double wtx = weightVector.dot(exampleFeatures, exampleValues) + bias;
+
+        if (isLMS) {
+            double multiplier = learningRate * (labelValue - wtx);
+            weightVector.scaledAdd(exampleFeatures, exampleValues, multiplier);
+            bias += multiplier;
+        }
+        else {
+            if (labelValue * wtx <= 1) {
+                double multiplier = learningRate * labelValue;
+                weightVector.scaledAdd(exampleFeatures, exampleValues, multiplier);
+                bias += multiplier;
+            }
+        }
+    }
+
+
+    /**
+     * Since this algorithm returns a real feature, it does not return scores.
+     *
+     * @param exampleFeatures  The example's array of feature indices.
+     * @param exampleValues    The example's array of feature values.
+     * @return <code>null</code>
+     **/
+    public ScoreSet scores(int[] exampleFeatures, double[] exampleValues) {
+        return null;
+    }
+
+
+    /**
+     * Returns the classification of the given example as a single feature
+     * instead of a {@link FeatureVector}.
+     *
+     * @param f  The features array.
+     * @param v  The values array.
+     * @return The classification of the example as a feature.
+     **/
+    public Feature featureValue(int[] f, double[] v) {
+        int index = score(f, v) >= 0 ? 1 : 0;
+        return predictions.get(index);
+    }
+
+
+    /**
+     * Simply computes the dot product of the weight vector and the example
+     *
+     * @param exampleFeatures  The example's array of feature indices.
+     * @param exampleValues    The example's array of feature values.
+     * @return The computed real value.
+     **/
+    public double score(int[] exampleFeatures, double[] exampleValues) {
+        return weightVector.dot(exampleFeatures, exampleValues) + bias;
+    }
+
+
+    /**
+     * Simply computes the dot product of the weight vector and the feature
+     * vector extracted from the example object.
+     *
+     * @param exampleFeatures  The example's array of feature indices.
+     * @param exampleValues    The example's array of feature values.
+     * @return The computed feature (in a vector).
+     **/
+    public FeatureVector classify(int[] exampleFeatures, double[] exampleValues) {
+        return new FeatureVector(featureValue(exampleFeatures, exampleValues));
+    }
+
+
+    /**
+     * Writes the algorithm's internal representation as text.  In the first
+     * line of output, the name of the classifier is printed, followed by
+     * {@link #learningRate} and {@link #bias}.
+     *
+     * @param out  The output stream.
+     **/
+    public void write(PrintStream out) {
+        out.println(name + ": " + learningRate + ", " + bias);
+        if (lexicon.size() == 0) weightVector.write(out);
+        else weightVector.write(out, lexicon);
+    }
+
+
+    /**
+     * Writes the learned function's internal representation in binary form.
+     *
+     * @param out  The output stream.
+     **/
+    public void write(ExceptionlessOutputStream out) {
+        super.write(out);
+        out.writeDouble(learningRate);
+        out.writeDouble(bias);
+        weightVector.write(out);
+    }
+
+
+    /**
+     * Reads the binary representation of a learner with this object's run-time
+     * type, overwriting any and all learned or manually specified parameters
+     * as well as the label lexicon but without modifying the feature lexicon.
+     *
+     * @param in The input stream.
+     **/
+    public void read(ExceptionlessInputStream in) {
+        super.read(in);
+        learningRate = in.readDouble();
+        bias = in.readDouble();
+        weightVector = SparseWeightVector.readWeightVector(in);
+    }
+
+
+    /** Returns a deep clone of this learning algorithm. */
+    public Object clone() {
+        StochasticGradientDescentCL clone = null;
+
+        try {
+            clone = (StochasticGradientDescentCL) super.clone();
+        } catch (Exception e) {
+            System.err.println("Error cloning StochasticGradientDescentCL: " + e);
+            System.exit(1);
+        }
+
+        clone.weightVector = (SparseWeightVector) weightVector.clone();
+        return clone;
+    }
+
+
+    /**
+     * Simply a container for all of {@link StochasticGradientDescent}'s
+     * configurable parameters.  Using instances of this class should make code
+     * more readable and constructors less complicated.
+     *
+     * @author Nick Rizzolo
+     **/
+    public static class Parameters extends Learner.Parameters {
+        /**
+         * The hypothesis vector; default
+         * {@link StochasticGradientDescent#defaultWeightVector}.
+         **/
+        public SparseWeightVector weightVector;
+        /**
+         * The rate at which weights are updated; default
+         * {@link #defaultLearningRate}.
+         **/
+        public double learningRate;
+
+        public String lossFunction;
+
+
+        /** Sets all the default values. */
+        public Parameters() {
+            weightVector = (SparseWeightVector) defaultWeightVector.clone();
+            learningRate = defaultLearningRate;
+            lossFunction = defaultLossFunction;
+        }
+
+
+        /**
+         * Sets the parameters from the parent's parameters object, giving
+         * defaults to all parameters declared in this object.
+         **/
+        public Parameters(Learner.Parameters p) {
+            super(p);
+            weightVector = (SparseWeightVector) defaultWeightVector.clone();
+            learningRate = defaultLearningRate;
+            lossFunction = defaultLossFunction;
+        }
+
+
+        /** Copy constructor. */
+        public Parameters(Parameters p) {
+            super(p);
+            weightVector = p.weightVector;
+            learningRate = p.learningRate;
+            lossFunction = p.lossFunction;
+        }
+
+
+        /**
+         * Calls the appropriate <code>Learner.setParameters(Parameters)</code>
+         * method for this <code>Parameters</code> object.
+         *
+         * @param l  The learner whose parameters will be set.
+         **/
+        public void setParameters(Learner l) {
+            ((StochasticGradientDescentCL) l).setParameters(this);
+        }
+
+
+        /**
+         * Creates a string representation of these parameters in which only
+         * those parameters that differ from their default values are mentioned.
+         **/
+        public String nonDefaultString() {
+            String result = super.nonDefaultString();
+
+            if (learningRate != StochasticGradientDescentCL.defaultLearningRate)
+                result += ", learningRate = " + learningRate;
+
+            if (result.startsWith(", ")) result = result.substring(2);
+            return result;
+        }
+    }
+}
