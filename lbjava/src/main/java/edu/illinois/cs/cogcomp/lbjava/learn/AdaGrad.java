@@ -255,13 +255,6 @@ public class AdaGrad extends Learner{
             }
         }
         else {
-            /*
-                check if a mistake is made
-
-                if y(w * x + theta) > 1, no mistake, g = 0
-                otherwise, made a mistake, g = -y*x
-                    note: for the first n features, the gradient is -yx, for theta, it is -y
-             */
             boolean didMakeAMistake = true;
 
             if (wDotProductX * labelValue > 1) {
