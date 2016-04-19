@@ -20,5 +20,11 @@ real SGDRegressor(MyData d) <-
     using RFeatures
 
     with StochasticGradientDescent {}
+end
 
+real ADGRegressor(MyData d) <-
+    learn RLabel
+    using RFeatures
+
+    with AdaGrad {}
 end

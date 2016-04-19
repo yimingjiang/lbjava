@@ -16,6 +16,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.RealPrimitiveStringFeature;
 import edu.illinois.cs.cogcomp.lbjava.classify.ScoreSet;
 
 import java.io.PrintStream;
+import java.util.Objects;
 
 /**
  * AdaGrad - Adaptive Stochastic Gradient Method
@@ -51,10 +52,12 @@ public class AdaGrad extends Learner{
     public static final double defaultLearningRate = 0.1;
 
     /* default loss function is hinge loss */
-    public static final String defaultLossFunction = "hinge";
+    public static final String defaultLossFunction = "lms";
 
     /* boolean flag to initialize internal data structures */
     private boolean areVectorsInitialized = false;
+
+    private boolean isLMS;
 
     /**
      * Constructor
@@ -138,6 +141,16 @@ public class AdaGrad extends Learner{
     public void setParameters(Parameters p) {
         learningRateA = p.learningRateP;
         lossFunctionA = p.lossFunctionP;
+        if (Objects.equals(p.lossFunctionP, "lms")) {
+            isLMS = true;
+        }
+        else if (Objects.equals(p.lossFunctionP, "hinge")) {
+            isLMS = false;
+        }
+        else {
+            System.out.println("Undefined loss function! lms or hinge");
+            System.exit(-1);
+        }
     }
 
     /**
@@ -208,60 +221,84 @@ public class AdaGrad extends Learner{
 
         double labelValue = labelValues[0];
 
-        /* hinge loss function */
-
         /* compute (w * x + theta) */
         double wDotProductX = 0.0;
-        for (int i = 0; i < featureDimension-1; i++) {
+        for (int i = 0; i < featureDimension - 1; i++) {
             wDotProductX += weightVector[i] * exampleValues[i];
         }
-        wDotProductX += weightVector[featureDimension-1];
+        wDotProductX += weightVector[featureDimension - 1];
 
-        /*
-            check if a mistake is made
-
-            if y(w * x + theta) > 1, no mistake, g = 0
-            otherwise, made a mistake, g = -y*x
-                note: for the first n features, the gradient is -yx, for theta, it is -y
-         */
-        boolean didMakeAMistake = true;
-
-        if (wDotProductX * labelValue > 1) {
-            didMakeAMistake = false;
-        }
-
-        /* compute gradient vector */
-        for (int i = 0; i < featureDimension-1; i++) {
-            if (didMakeAMistake) {
-                gradientVector[i] = (-1) * labelValue * exampleValues[i];
+        if (isLMS) {
+            double multiplier = wDotProductX - labelValue;
+            /* compute gradient vector */
+            for (int i = 0; i < featureDimension - 1; i++) {
+                gradientVector[i] = multiplier * exampleValues[i];
             }
-            else {
-                gradientVector[i] = 0;
+
+            gradientVector[featureDimension - 1] = multiplier;
+
+            /* compute diagonal vector, aka squares of gradient vector */
+            for (int i = 0; i < featureDimension; i++) {
+
+                /* compute G_t = sum from 1 to t (g_t ^2) */
+                diagonalVector[i] = diagonalVector[i] + (gradientVector[i] * gradientVector[i]);
+
+                double denominator = Math.sqrt(diagonalVector[i]);
+                if (denominator == 0) {
+                    denominator = Math.pow(10, -100);               // avoid denominator being 0
+                }
+
+                /* update weight vector */
+                /* w_(t+1) = w_t - g_t * r/(G_t)^(1/2) */
+                    weightVector[i] = weightVector[i] -
+                            (gradientVector[i] * learningRateA / denominator);
             }
-        }
-        if (didMakeAMistake) {
-            gradientVector[featureDimension-1] = (-1) * labelValue;
         }
         else {
-            gradientVector[featureDimension-1] = 0;
-        }
+            /*
+                check if a mistake is made
 
-        /* compute diagonal vector, aka squares of gradient vector */
-        for (int i = 0; i < featureDimension; i++) {
+                if y(w * x + theta) > 1, no mistake, g = 0
+                otherwise, made a mistake, g = -y*x
+                    note: for the first n features, the gradient is -yx, for theta, it is -y
+             */
+            boolean didMakeAMistake = true;
 
-            /* compute G_t = sum from 1 to t (g_t ^2) */
-            diagonalVector[i] = diagonalVector[i] + (gradientVector[i] * gradientVector[i]);
-
-            double denominator = Math.sqrt(diagonalVector[i]);
-            if (denominator == 0) {
-                denominator = Math.pow(10, -100);               // avoid denominator being 0
+            if (wDotProductX * labelValue > 1) {
+                didMakeAMistake = false;
             }
 
-            /* update weight vector */
+            /* compute gradient vector */
+            for (int i = 0; i < featureDimension - 1; i++) {
+                if (didMakeAMistake) {
+                    gradientVector[i] = (-1) * labelValue * exampleValues[i];
+                } else {
+                    gradientVector[i] = 0;
+                }
+            }
             if (didMakeAMistake) {
+                gradientVector[featureDimension - 1] = (-1) * labelValue;
+            } else {
+                gradientVector[featureDimension - 1] = 0;
+            }
+
+            /* compute diagonal vector, aka squares of gradient vector */
+            for (int i = 0; i < featureDimension; i++) {
+
+                /* compute G_t = sum from 1 to t (g_t ^2) */
+                diagonalVector[i] = diagonalVector[i] + (gradientVector[i] * gradientVector[i]);
+
+                double denominator = Math.sqrt(diagonalVector[i]);
+                if (denominator == 0) {
+                    denominator = Math.pow(10, -100);               // avoid denominator being 0
+                }
+
+                /* update weight vector */
+                if (didMakeAMistake) {
                 /* w_(t+1) = w_t - g_t * r/(G_t)^(1/2) */
-                weightVector[i] = weightVector[i] -
-                        (gradientVector[i] * learningRateA / denominator);
+                    weightVector[i] = weightVector[i] -
+                            (gradientVector[i] * learningRateA / denominator);
+                }
             }
         }
     }
