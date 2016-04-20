@@ -253,7 +253,7 @@ public class MultiLayerPerceptron extends Learner{
 //        }
 
         for (int i = 0; i < networkOutput.length; i++) {
-            if (networkOutput[i] >= 0.4) {
+            if (networkOutput[i] >= 0.5) {
                 return i;
             }
         }
