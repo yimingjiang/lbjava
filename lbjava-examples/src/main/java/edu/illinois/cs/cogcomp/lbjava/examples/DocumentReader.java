@@ -12,10 +12,7 @@ package edu.illinois.cs.cogcomp.lbjava.examples;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser;
 
@@ -53,7 +50,9 @@ public class DocumentReader implements Parser {
                 files.addAll(Arrays.asList(f.listFiles()));
             }
         }
-        
+
+        Random rand = new Random(0);
+        Collections.shuffle(files, rand);
         Collections.shuffle(files);
         currentFileId = 0;
     }
