@@ -1,22 +1,38 @@
+/**
+ * This software is released under the University of Illinois/Research and
+ * Academic Use License. See the LICENSE file in the root folder for details.
+ * Copyright (c) 2016
+ * <p>
+ * Developed by:
+ * The Cognitive Computations Group
+ * University of Illinois at Urbana-Champaign
+ * http://cogcomp.cs.illinois.edu/
+ */
 package edu.illinois.cs.cogcomp.lbjava.learn;
-
 
 import edu.illinois.cs.cogcomp.lbjava.classify.Feature;
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
-import edu.illinois.cs.cogcomp.lbjava.classify.RealPrimitiveStringFeature;
 import edu.illinois.cs.cogcomp.lbjava.classify.ScoreSet;
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessInputStream;
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream;
-
 import java.io.PrintStream;
 import java.util.Objects;
 
+/**
+ * Stochastic Gradient Descent learning algorithm for classification
+ *
+ * There are two user-configurable loss functions: hinge, least mean square.
+ * Default is least mean square, "lms".
+ *
+ * @author Yiming Jiang
+ */
 public class StochasticGradientDescentCL extends LinearThresholdUnit {
     /** Default value for {@link #learningRate}. */
     public static final double defaultLearningRate = 0.1;
     /** Default for {@link #weightVector}. */
     public static final SparseWeightVector defaultWeightVector =
             new SparseWeightVector();
+    /** Default loss function */
     public static final String defaultLossFunction = "lms";
 
 
@@ -31,9 +47,13 @@ public class StochasticGradientDescentCL extends LinearThresholdUnit {
      * {@link #defaultLearningRate}.
      **/
     protected double learningRate;
-
+    /**
+     * The name of the loss function
+     */
     protected String lossFunction;
-
+    /**
+     * Boolean flag for loss function
+     */
     private boolean isLMS;
 
     /**
@@ -169,11 +189,13 @@ public class StochasticGradientDescentCL extends LinearThresholdUnit {
         bias = 0;
     }
 
+    /** Inherited unused method from LTU class */
     @Override
     public void promote(int[] exampleFeatures, double[] exampleValues, double rate) {
 
     }
 
+    /** Inherited unused method from LTU class */
     @Override
     public void demote(int[] exampleFeatures, double[] exampleValues, double rate) {
 
@@ -345,7 +367,9 @@ public class StochasticGradientDescentCL extends LinearThresholdUnit {
          * {@link #defaultLearningRate}.
          **/
         public double learningRate;
-
+        /**
+         * This name of the loss function
+         */
         public String lossFunction;
 
 

@@ -18,14 +18,14 @@ public class CLMain {
         StochasticGradientDescentCL sgdcl = new StochasticGradientDescentCL();
         StochasticGradientDescentCL.Parameters sgdclp = new StochasticGradientDescentCL.Parameters();
         sgdclp.learningRate = Math.pow(10, -3);
-        sgdclp.lossFunction = "hinge";
+        sgdclp.lossFunction = "lms";
         sgdcl.setParameters(sgdclp);
         networkParameters.baseLTU = sgdcl;
 
         sparseNetworkLearner.setParameters(networkParameters);
 
         BatchTrainer adgclTrainer = new BatchTrainer(sparseNetworkLearner, trainingSet);
-        adgclTrainer.train(2);
+        adgclTrainer.train(10);
 
 
         AlgoParser testingSet = new AlgoParser(dataSet, false);

@@ -12,7 +12,6 @@ package edu.illinois.cs.cogcomp.lbjava.learn;
 
 import java.io.PrintStream;
 import java.util.Objects;
-
 import edu.illinois.cs.cogcomp.lbjava.classify.Feature;
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
 import edu.illinois.cs.cogcomp.lbjava.classify.RealPrimitiveStringFeature;
@@ -47,6 +46,7 @@ public class StochasticGradientDescent extends Learner {
     /** Default for {@link #weightVector}. */
     public static final SparseWeightVector defaultWeightVector =
             new SparseWeightVector();
+    /** Default loss function */
     public static final String defaultLossFunction = "lms";
 
 
@@ -61,9 +61,13 @@ public class StochasticGradientDescent extends Learner {
      * {@link #defaultLearningRate}.
      **/
     protected double learningRate;
-
+    /**
+     * The name of the loss function
+     */
     protected String lossFunction;
-
+    /**
+     * Boolean flag for loss function
+     */
     private boolean isLMS;
 
     /**
@@ -369,7 +373,9 @@ public class StochasticGradientDescent extends Learner {
          * {@link #defaultLearningRate}.
          **/
         public double learningRate;
-
+        /**
+         * This name of the loss function
+         */
         public String lossFunction;
 
 
