@@ -54,7 +54,7 @@ public class StochasticGradientDescentCL extends LinearThresholdUnit {
     /**
      * Boolean flag for loss function
      */
-    private boolean isLMS;
+    protected boolean isLMS;
 
     /**
      * The learning rate takes the default value, while the name of the
@@ -225,6 +225,10 @@ public class StochasticGradientDescentCL extends LinearThresholdUnit {
 
         double wtx = weightVector.dot(exampleFeatures, exampleValues) + bias;
 
+        learnUpdate(exampleFeatures, exampleValues, labelValue, wtx);
+    }
+
+    void learnUpdate(int[] exampleFeatures, double[] exampleValues, double labelValue, double wtx) {
         if (isLMS) {
             double multiplier = learningRate * (labelValue - wtx);
             weightVector.scaledAdd(exampleFeatures, exampleValues, multiplier);
