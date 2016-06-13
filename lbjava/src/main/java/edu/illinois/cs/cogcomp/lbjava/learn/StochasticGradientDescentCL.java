@@ -151,7 +151,7 @@ public class StochasticGradientDescentCL extends LinearThresholdUnit {
      **/
     public Learner.Parameters getParameters() {
         Parameters p = new Parameters(super.getParameters());
-        p.weightVector = weightVector.emptyClone();
+        p.weightVector = weightVector;
         p.learningRate = learningRate;
         return p;
     }

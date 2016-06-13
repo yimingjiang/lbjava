@@ -66,3 +66,7 @@ lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/regression
 lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/cl/CLClassifier.java
 lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/cl/CLFeatures.java
 lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/cl/CLLabel.java
+lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/rg/ADGRegressor.java
+lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/rg/RFeatures.java
+lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/rg/RLabel.java
+lbjava-examples/src/main/java/edu/illinois/cs/cogcomp/lbjava/examples/rg/SGDRegressor.java
