@@ -131,6 +131,7 @@ public class MultiLayerPerceptron extends NeuralNetwork<BackPropagation> {
         // create input layer
         NeuronProperties inputNeuronProperties = new NeuronProperties(InputNeuron.class, Linear.class);
         Layer layer = LayerFactory.createLayer(neuronsInLayers.get(0), inputNeuronProperties);
+        //Layer layer = LayerFactory.createInputLayer(new int[1], new double[1], inputNeuronProperties);
 
         boolean useBias = true; // use bias neurons by default
         if (neuronProperties.hasProperty("useBias")) {

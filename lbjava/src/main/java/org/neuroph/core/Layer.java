@@ -79,6 +79,10 @@ public class Layer implements Serializable {
      * @param neuronProperties properties of neurons in layer
      */
     public Layer(int neuronsCount, NeuronProperties neuronProperties) {
+        layerConstructorHelper(neuronsCount, neuronProperties);
+    }
+
+    void layerConstructorHelper(int neuronsCount, NeuronProperties neuronProperties) {
         neurons = new NeurophArrayList(Neuron.class, neuronsCount);
 
         for (int i = 0; i < neuronsCount; i++) {
@@ -251,7 +255,7 @@ public class Layer implements Serializable {
     static final ForkJoinPool mainPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
     /**
-     * Performs calculaton for all neurons in this layer
+     * Performs calculation for all neurons in this layer
      */
     public void calculate() {
 

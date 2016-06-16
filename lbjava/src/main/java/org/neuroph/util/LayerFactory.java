@@ -19,6 +19,7 @@ package org.neuroph.util;
 import java.util.List;
 import org.neuroph.core.Layer;
 import org.neuroph.core.Neuron;
+import org.neuroph.core.SparseInputLayer;
 import org.neuroph.core.transfer.TransferFunction;
 
 /**
@@ -27,9 +28,16 @@ import org.neuroph.core.transfer.TransferFunction;
  */
 public class LayerFactory {
 
+	public static Layer createInputLayer(int[] featureIndexVector,
+                                         double[] featureValueVector,
+                                         NeuronProperties neuronProperties) {
+        Layer layer = new SparseInputLayer(featureIndexVector, featureValueVector, neuronProperties);
+        return layer;
+    }
+
 	public static Layer createLayer(int neuronsCount, NeuronProperties neuronProperties) {
 		Layer layer = new Layer(neuronsCount, neuronProperties);
-        	return layer;
+        return layer;
 	}
 
 	public static Layer createLayer(int neuronsCount, TransferFunctionType transferFunctionType) {

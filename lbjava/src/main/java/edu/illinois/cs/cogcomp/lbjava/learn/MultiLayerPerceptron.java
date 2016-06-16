@@ -87,8 +87,8 @@ public class MultiLayerPerceptron extends Learner{
             }
         }
 
-        System.out.println("Hidden Layers: ");
-        System.out.println(Arrays.toString(hiddenLayersA));
+//        System.out.println("Hidden Layers: ");
+//        System.out.println(Arrays.toString(hiddenLayersA));
 
         // construct layer count list
         int[] layersCountList = new int[2+hiddenLayersA.length];
@@ -214,8 +214,8 @@ public class MultiLayerPerceptron extends Learner{
             addMoreOutputNeurons(exampleLabels, labelValues);
         }
 
-        count ++;
-        System.out.printf("%d, %d\n", count, mlp.getInputsCount());
+//        count ++;
+//        System.out.printf("%d, %d\n", count, mlp.getInputsCount());
 
         double[] featuresArray = createFeaturesArray(exampleFeatures, exampleValues);
         double[] labelsArray = createLabelsArray(exampleLabels);
