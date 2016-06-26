@@ -18,9 +18,8 @@ import org.neuroph.util.random.RangeRandomizer;
 import org.neuroph.util.random.WeightsRandomizer;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class MultiLayerPerceptron extends Learner{
 
@@ -39,6 +38,9 @@ public class MultiLayerPerceptron extends Learner{
 
     private HashMap<Integer, Integer> featuresMap;
     private ArrayList<Integer> labelsList;
+
+    private int[][] denseMatrixBooleanMapping;
+    private Random randomBinary;
 
     private int count = 0;
 
@@ -93,7 +95,7 @@ public class MultiLayerPerceptron extends Learner{
         // construct layer count list
         int[] layersCountList = new int[2+hiddenLayersA.length];
 
-        layersCountList[0] = featuresMap.size();
+        layersCountList[0] = 1000;
 
         System.arraycopy(hiddenLayersA, 0, layersCountList, 1, layersCountList.length - 1 - 1);
         layersCountList[layersCountList.length-1] = 1;
@@ -105,35 +107,25 @@ public class MultiLayerPerceptron extends Learner{
 
         labelsList = new ArrayList<>();
         labelsList.add(labelsIndices[0]);
+
+        randomBinary = new Random(0);
+        denseMatrixBooleanMapping = new int[10000][1000];
+        fillMatrixWithBooleans();
     }
 
-    private void addMoreInputNeurons(int[] featuresIndices) {
-        WeightsRandomizer randomizer = new RangeRandomizer(-0.7, 0.7);
+    private int generateRandomBinary() {
+        return randomBinary.nextInt(2);
+    }
 
-        // iterate through features indices and find newer ones
-        for (int i = 0; i < featuresIndices.length; i++) {
-            if (!featuresMap.containsKey(featuresIndices[i])) {
-                featuresMap.put(featuresIndices[i], 1);
+    private void fillMatrixWithBooleans() {
+        int estimatedFeatureVectorDimension = 10000;
+        int denseVectorDimension = 1000;
 
-                NeuronProperties inputNeuronProperties = new NeuronProperties(InputNeuron.class, Linear.class);
-                Neuron neuron = NeuronFactory.createNeuron(inputNeuronProperties);
-
-                // connect the new neuron to all neurons in layer[1]
-                ConnectionFactory.createConnection(neuron, mlp.getLayerAt(1));
-
-                mlp.addNeuronToInputNeurons(neuron);
-                randomizer.randomize(neuron);
-
-                // add new neuron to the input layer
-                mlp.getLayerAt(0).addNeuron(neuron);
-
-                // instantiate trainingData for new connections
-                for (Connection connection : neuron.getOutConnections()) {
-                    connection.getWeight().setTrainingData(new MomentumBackpropagation.MomentumWeightTrainingData());
-                }
+        for (int i = 0; i < estimatedFeatureVectorDimension; i++) {
+            for(int j = 0; j < denseVectorDimension; j++) {
+                denseMatrixBooleanMapping[i][j] = generateRandomBinary();
             }
         }
-
     }
 
     private void addMoreOutputNeurons(int[] labelIndices, double[] labelValues) {
@@ -172,12 +164,12 @@ public class MultiLayerPerceptron extends Learner{
     }
 
     private double[] createFeaturesArray(int[] exampleIndices, double[] exampleValues) {
-        int d = featuresMap.size();
-        double[] featureVector = new double[d];
+
+        double[] featureVector = new double[1000];
 
         for (int i = 0; i < exampleIndices.length; i++) {
-            if (exampleIndices[i] < d) {
-                featureVector[exampleIndices[i]] = exampleValues[i];
+            for (int j = 0; j < 1000; j++) {
+                featureVector[j] += denseMatrixBooleanMapping[exampleIndices[i]][j];
             }
         }
 
@@ -210,7 +202,6 @@ public class MultiLayerPerceptron extends Learner{
             isFirstTime = false;
         }
         else {
-            addMoreInputNeurons(exampleFeatures);
             addMoreOutputNeurons(exampleLabels, labelValues);
         }
 

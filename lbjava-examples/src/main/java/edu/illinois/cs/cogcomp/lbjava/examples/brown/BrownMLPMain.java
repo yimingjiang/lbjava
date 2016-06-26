@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner;
 public class BrownMLPMain {
     public static void main(String[] args) {
 
-        String name = "accept";
+        String name = "their";
         int iter = 100;
 
         SpellingParser trainingDataSet =
