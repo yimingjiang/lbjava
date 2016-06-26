@@ -56,6 +56,10 @@ public class UnsupervisedHebbianLearning extends UnsupervisedLearning {
 		stopLearning(); // stop learning ahter one learning epoch -- why ? - because we dont have any other stopping criteria for this - must limit the iterations
 	}
 
+	public void doLearningEpoch(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+
+	}
+
 	/**
 	 * Adjusts weights for the output neurons
 	 */

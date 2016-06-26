@@ -178,4 +178,6 @@ abstract public class LearningRule implements Serializable {
     abstract public void learn(DataSet trainingSet);
 
     abstract public void learn(DataSetRow dataSetRow);
+
+    abstract public void learn(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector);
 }

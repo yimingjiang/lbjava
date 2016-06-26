@@ -179,6 +179,10 @@ abstract public class SupervisedLearning extends IterativeLearning implements
         this.learnPattern(trainingSetRow);
     }
 
+    public void doLearningEpoch(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+        this.learnPattern(featureIndexVector, featureValueVector, labelValueVector);
+    }
+
     /**
      * Trains network with the input and desired output pattern from the specified training element
      *
@@ -191,6 +195,14 @@ abstract public class SupervisedLearning extends IterativeLearning implements
         double[] output = this.neuralNetwork.getOutput();
         double[] desiredOutput = trainingElement.getDesiredOutput();
         double[] patternError = errorFunction.calculatePatternError(output, desiredOutput);
+        this.updateNetworkWeights(patternError);
+    }
+
+    protected void learnPattern(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+        this.neuralNetwork.setInput(featureIndexVector, featureValueVector);
+        this.neuralNetwork.calculate();
+        double[] output = this.neuralNetwork.getOutput();
+        double[] patternError = errorFunction.calculatePatternError(output, labelValueVector);
         this.updateNetworkWeights(patternError);
     }
 

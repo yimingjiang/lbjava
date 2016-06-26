@@ -80,6 +80,16 @@ public class MultiLayerPerceptron extends NeuralNetwork<BackPropagation> {
         this.createNetwork(neuronsInLayersVector, neuronProperties);
     }
 
+    public MultiLayerPerceptron(int[] hiddenLayerCountList, int[] featureIndexVector, double[] featureValueVector) {
+        // init neuron settings
+        NeuronProperties neuronProperties = new NeuronProperties();
+        neuronProperties.setProperty("useBias", true);
+        neuronProperties.setProperty("transferFunction", TransferFunctionType.SIGMOID);
+        neuronProperties.setProperty("inputFunction", WeightedSum.class);
+
+        this.createNetwork(hiddenLayerCountList, featureIndexVector, featureValueVector, neuronProperties);
+    }
+
     public MultiLayerPerceptron(TransferFunctionType transferFunctionType, int... neuronsInLayers) {
         // init neuron settings
         NeuronProperties neuronProperties = new NeuronProperties();
@@ -116,6 +126,63 @@ public class MultiLayerPerceptron extends NeuralNetwork<BackPropagation> {
         this.createNetwork(neuronsInLayers, neuronProperties);
     }
 
+    private void createNetwork(int[] hiddenLayerCountList,
+                               int[] featureIndexVector,
+                               double[] featureValueVector,
+                               NeuronProperties neuronProperties) {
+        // set network type
+        this.setNetworkType(NeuralNetworkType.MULTI_LAYER_PERCEPTRON);
+
+        // create input layer
+        NeuronProperties inputNeuronProperties = new NeuronProperties(InputNeuron.class, Linear.class);
+        Layer layer = LayerFactory.createInputLayer(featureIndexVector, featureValueVector, inputNeuronProperties);
+
+        boolean useBias = true; // use bias neurons by default
+        if (neuronProperties.hasProperty("useBias")) {
+            useBias = (Boolean) neuronProperties.getProperty("useBias");
+        }
+
+        if (useBias) {
+            layer.addNeuron(new BiasNeuron());
+        }
+
+        this.addLayer(layer);
+
+        // create layers
+        Layer prevLayer = layer;
+
+        for (int i : hiddenLayerCountList) {
+            // create hidden layer
+            layer = LayerFactory.createLayer(i, neuronProperties);
+
+            // add a bias neuron
+            if (useBias) {
+                layer.addNeuron(new BiasNeuron());
+            }
+
+            // add created layer to network
+            this.addLayer(layer);
+
+            // createLayer full connectivity between previous and this layer
+            if (prevLayer != null) {
+                ConnectionFactory.fullConnect(prevLayer, layer);
+            }
+
+            prevLayer = layer;
+        }
+
+        // create output layer
+        layer = LayerFactory.createLayer(1, neuronProperties);
+        this.addLayer(layer);
+        ConnectionFactory.fullConnect(prevLayer, layer);
+
+        // set input and output cells for network
+        NeuralNetworkFactory.setDefaultIO(this);
+
+        this.setLearningRule(new MomentumBackpropagation());
+
+        this.randomizeWeights(new RangeRandomizer(-0.7, 0.7));
+    }
     /**
      * Creates MultiLayerPerceptron Network architecture - fully connected
      * feed forward with specified number of neurons in each layer
@@ -178,6 +245,8 @@ public class MultiLayerPerceptron extends NeuralNetwork<BackPropagation> {
         this.randomizeWeights(new RangeRandomizer(-0.7, 0.7));
 
     }
+
+
 
     public void connectInputsToOutputs() {
         // connect first and last layer

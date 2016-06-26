@@ -76,35 +76,26 @@ public class MultiLayerPerceptron extends Learner{
         hiddenLayersA = p.hiddenLayersP;
     }
 
-    private void initialize(int[] featuresIndices, int[] labelsIndices) {
+    private void initialize(int[] featureIndexVector,
+                            double[] featureValueVector,
+                            int[] labelIndexVector) {
         // initialize feature hash map
         featuresMap = new HashMap<>();
 
         // add feature index to the hash map
-        for (int i = 0; i < featuresIndices.length; i++) {
-            if (!featuresMap.containsKey(featuresIndices[i])) {
-                featuresMap.put(featuresIndices[i], 1);
+        for (int aFeatureIndexVector : featureIndexVector) {
+            if (!featuresMap.containsKey(aFeatureIndexVector)) {
+                featuresMap.put(aFeatureIndexVector, 1);
             }
         }
 
-//        System.out.println("Hidden Layers: ");
-//        System.out.println(Arrays.toString(hiddenLayersA));
-
-        // construct layer count list
-        int[] layersCountList = new int[2+hiddenLayersA.length];
-
-        layersCountList[0] = featuresMap.size();
-
-        System.arraycopy(hiddenLayersA, 0, layersCountList, 1, layersCountList.length - 1 - 1);
-        layersCountList[layersCountList.length-1] = 1;
-
-        mlp = new org.neuroph.nnet.MultiLayerPerceptron(layersCountList);
+        mlp = new org.neuroph.nnet.MultiLayerPerceptron(hiddenLayersA, featureIndexVector, featureValueVector);
 
         learningRule = new MomentumBackpropagation();
         learningRule.setLearningRate(learningRateA);
 
         labelsList = new ArrayList<>();
-        labelsList.add(labelsIndices[0]);
+        labelsList.add(labelIndexVector[0]);
     }
 
     private void addMoreInputNeurons(int[] featuresIndices) {
@@ -198,7 +189,10 @@ public class MultiLayerPerceptron extends Learner{
     }
 
     @Override
-    public void learn(int[] exampleFeatures, double[] exampleValues, int[] exampleLabels, double[] labelValues) {
+    public void learn(int[] exampleFeatures,
+                      double[] exampleValues,
+                      int[] exampleLabels,
+                      double[] labelValues) {
 //        System.out.println(Arrays.toString(exampleFeatures));
 //        System.out.println(Arrays.toString(exampleValues));
 //        System.out.println(Arrays.toString(exampleLabels));
@@ -206,7 +200,7 @@ public class MultiLayerPerceptron extends Learner{
 //        System.out.println();
 
         if (isFirstTime) {
-            initialize(exampleFeatures, exampleLabels);
+            initialize(exampleFeatures, exampleValues, exampleLabels);
             isFirstTime = false;
         }
         else {
@@ -214,18 +208,16 @@ public class MultiLayerPerceptron extends Learner{
             addMoreOutputNeurons(exampleLabels, labelValues);
         }
 
-//        count ++;
-//        System.out.printf("%d, %d\n", count, mlp.getInputsCount());
+        count ++;
+        System.out.printf("%d, %d\n", count, mlp.getInputNeurons().length);
 
-        double[] featuresArray = createFeaturesArray(exampleFeatures, exampleValues);
+        //System.out.printf("%d\t%d\n\n\n", mlp.getInputNeurons().length, mlp.getOutputNeurons().length);
+
+        //double[] featuresArray = createFeaturesArray(exampleFeatures, exampleValues);
         double[] labelsArray = createLabelsArray(exampleLabels);
 
-        DataSetRow row = new DataSetRow(featuresArray, labelsArray);
-
-        //System.out.println(labelsList.toString());
-        //System.out.println(mlp.toString());
-
-        mlp.learn(row);
+        //DataSetRow row = new DataSetRow(featuresArray, labelsArray);
+        mlp.learn(exampleFeatures, exampleValues, labelsArray);
     }
 
     @Override
@@ -240,9 +232,10 @@ public class MultiLayerPerceptron extends Learner{
     }
 
     private int findLabelIndex(int[] exampleFeatures, double[] exampleValues) {
-        double[] exampleFeaturesArray = createFeaturesArray(exampleFeatures, exampleValues);
-        DataSetRow row = new DataSetRow(exampleFeaturesArray);
-        mlp.setInput(row.getInput());
+//        double[] exampleFeaturesArray = createFeaturesArray(exampleFeatures, exampleValues);
+//        DataSetRow row = new DataSetRow(exampleFeaturesArray);
+//        mlp.setInput(row.getInput());
+        mlp.setInput(exampleFeatures, exampleValues);
         mlp.calculate();
         double[] networkOutput = mlp.getOutput();
 

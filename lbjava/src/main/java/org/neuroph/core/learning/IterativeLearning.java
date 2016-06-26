@@ -225,6 +225,17 @@ abstract public class IterativeLearning extends LearningRule implements
         afterEpoch();
     }
 
+    @Override
+    final public void learn(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+        if (isFirstTime) {
+            onStart();
+            isFirstTime = false;
+        }
+        beforeEpoch();
+        doLearningEpoch(featureIndexVector, featureValueVector, labelValueVector);
+        //afterEpoch();
+    }
+
     protected boolean hasReachedStopCondition() {
         for (StopCondition stop : stopConditions) {
             if (stop.isReached()) {
@@ -271,4 +282,6 @@ abstract public class IterativeLearning extends LearningRule implements
     abstract public void doLearningEpoch(DataSet trainingSet);
 
     abstract public void doLearningEpoch(DataSetRow trainingSetRow);
+
+    abstract public void doLearningEpoch(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector);
 }

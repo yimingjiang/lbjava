@@ -84,4 +84,8 @@ public class HopfieldLearning extends LearningRule {
 
 	}
 
+	public void learn(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+
+    }
+
 }

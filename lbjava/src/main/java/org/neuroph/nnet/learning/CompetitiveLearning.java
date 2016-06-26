@@ -57,7 +57,11 @@ public class CompetitiveLearning extends UnsupervisedLearning {
 	public void doLearningEpoch(DataSet trainingSet) {
 		super.doLearningEpoch(trainingSet);
 		stopLearning(); // stop learning ahter one learning epoch - because we dont have any stopping criteria  for unsupervised...
-	}		
+	}
+
+	public void doLearningEpoch(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+
+	}
 	
 	/**
 	 * Adjusts weights for the winning neuron

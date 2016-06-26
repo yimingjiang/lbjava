@@ -75,6 +75,10 @@ public class KohonenLearning extends LearningRule {
 
     }
 
+	public void learn(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+
+    }
+
 	private void learnPattern(DataSetRow dataSetRow, int neighborhood) {
 		neuralNetwork.setInput(dataSetRow.getInput());
 		neuralNetwork.calculate();

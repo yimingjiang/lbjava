@@ -290,6 +290,17 @@ public class NeuralNetwork<L extends LearningRule> implements Serializable {
         }
     }
 
+    public void setInput(int[] featureIndexVector, double[] featureValueVector) throws VectorSizeMismatchException {
+        // set feature index vector + value vector in input layer
+        ((SparseInputLayer)this.getLayerAt(0)).currentActiveFeatureIndexVector = featureIndexVector;
+        ((SparseInputLayer)this.getLayerAt(0)).currentActiveFeatureValueVector = featureValueVector;
+
+        // set input neurons accordingly
+        for (int i = 0; i < featureIndexVector.length; i++) {
+            this.inputNeurons.get(featureIndexVector[i]).setInput(featureValueVector[i]);
+        }
+    }
+
 
     /**
      * Returns network output vector. Output vector is an array  collection of Double
@@ -310,12 +321,10 @@ public class NeuralNetwork<L extends LearningRule> implements Serializable {
      * Performs calculation on whole network
      */
     public void calculate() {
-
         for (Layer layer : this.layers.asArray()) {
             layer.calculate();
         }
 
-//        List<Future<Long>> results = mainPool.invokeAll(Arrays.asList(layers.asArray()));
         fireNetworkEvent(new NeuralNetworkEvent(this, NeuralNetworkEvent.Type.CALCULATED));
     }
 
@@ -343,6 +352,10 @@ public class NeuralNetwork<L extends LearningRule> implements Serializable {
 
     public void learn(DataSetRow trainingSetRow) {
         learningRule.learn(trainingSetRow);
+    }
+
+    public void learn(int[] featureIndexVector, double[] featureValueVector, double[] labelValueVector) {
+        learningRule.learn(featureIndexVector, featureValueVector, labelValueVector);
     }
 
     /**

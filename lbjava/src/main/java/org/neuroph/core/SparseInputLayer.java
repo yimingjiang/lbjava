@@ -5,7 +5,7 @@ import org.neuroph.util.NeuronProperties;
 public class SparseInputLayer extends Layer {
 
     public int[] currentActiveFeatureIndexVector;
-    public int[] currentActiveFeatureValueVector;
+    public double[] currentActiveFeatureValueVector;
 
     /**
      * Creates an instance of empty Layer
@@ -25,7 +25,7 @@ public class SparseInputLayer extends Layer {
         double maxValue = 0;
 
         for (int i : featureIndexVector) {
-            if (featureValueVector[i] > maxValue) {
+            if (i > maxValue) {
                 maxIndex = i;
             }
         }
