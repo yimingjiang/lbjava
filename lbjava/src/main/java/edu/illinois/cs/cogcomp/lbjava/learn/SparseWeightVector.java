@@ -14,12 +14,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.DVector;
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.ExceptionlessInputStream;
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.ExceptionlessOutputStream;
 import edu.illinois.cs.cogcomp.lbjava.classify.Feature;
 import edu.illinois.cs.cogcomp.lbjava.util.ClassUtils;
-import edu.illinois.cs.cogcomp.lbjava.util.DVector;
-import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessInputStream;
-import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream;
-
 
 /**
  * This class is used as a weight vector in sparse learning algorithms. {@link Feature}s are
@@ -92,7 +91,7 @@ public class SparseWeightVector implements Cloneable, Serializable {
      * @param featureIndex The feature index.
      * @param w The new weight.
      **/
-    protected void setWeight(int featureIndex, double w) {
+    public void setWeight(int featureIndex, double w) {
         setWeight(featureIndex, w, defaultWeight);
     }
 
@@ -103,7 +102,7 @@ public class SparseWeightVector implements Cloneable, Serializable {
      * @param w The new weight.
      * @param defaultW The default weight.
      **/
-    protected void setWeight(int featureIndex, double w, double defaultW) {
+    public void setWeight(int featureIndex, double w, double defaultW) {
         weights.set(featureIndex, w, defaultW);
     }
 

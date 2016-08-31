@@ -14,9 +14,8 @@ Visit each link for its content
  3. [A working example: classifiying newsgroup documents into topics](doc/20NEWSGROUP.md)
  4. [Syntax of LBJava](doc/LBJLANGUAGE.md)
  5. [LBJava library](doc/LBJLIBRARY.md)
- 6. [Installation and Commandline options](doc/INSTALLATION.md)
- 7. [A working example: regression](doc/REGRESSION.md)
- 8. [Learning Algorithms](doc/ALGORITHMS.md)
+ 6. [A working example: regression](doc/REGRESSION.md)
+ 7. [Learning Algorithms](doc/ALGORITHMS.md)
  
 ## Using it as a dependency  
 To include LBJava in your Maven project, add the following snippet with the
@@ -44,7 +43,35 @@ To include LBJava in your Maven project, add the following snippet with the
     </repositories>
 ```
 
-## Compiling the code 
+## Compiling LBJava code in your projects
+To compile the `.lbj` files into Java code you will need to use the [LBJava maven plugin](../lbjava-mvn-plugin/README.md).
+Briefly, you need to add the `<pluginRepositories>` and `<build>` snippets into your pom.xml file:
+```xml 
+<pluginRepositories>
+    <pluginRepository>
+        <id>CogcompSoftware</id>
+        <name>CogcompSoftware</name>
+        <url>http://cogcomp.cs.illinois.edu/m2repo/</url>
+    </pluginRepository>
+</pluginRepositories>
+...
+<build>
+ <plugins>
+   <plugin>
+     <groupId>edu.illinois.cs.cogcomp</groupId>
+     <artifactId>lbjava-maven-plugin</artifactId>
+     <version>LBJAVA-VERSION</version>
+     <configuration>
+       <lbjavaInputFileList>
+         <param>lbjava/MyClassifier.lbj</param>
+       </lbjavaInputFileList>
+     </configuration>
+   </plugin>
+ </plugins>
+</build>
+```
+ 
+## Compiling the LBJava-core code 
 To compile and package the LBJava code simply run:
 
     mvn install
@@ -53,16 +80,9 @@ NB: If you need to run `mvn clean` at any point, make sure to create `target/cla
 running `mvn compile/install` since it is required for the java-source compilation process.
 
 ## Using ILP inference 
-LBJava uses the Gurobi solver for inference and therefore the Gurobi library needs to be installed 
-prior to compilation. To download and install Gurobi visit [http://www.gurobi.com/](http://www.gurobi.com/)
-
-Make sure to include Gurobi in your PATH and LD_LIBRARY variables
-```
-    export GUROBI_HOME="PATH-TO-GUROBI/linux64"
-    export PATH="${PATH}:${GUROBI_HOME}/bin"
-    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
-```
-
+LBJava uses the the solvers included in [illinois-inference](https://gitlab-beta.engr.illinois.edu/cogcomp/inference/) for 
+inference. We refer the interested reader to the aforementioned library, 
+for more details and instructions on how to install these libraries. 
 
 ## Credits 
 This project was started by [Nicholas Rizzolo](mailto:rizzolo@gmail.com).
