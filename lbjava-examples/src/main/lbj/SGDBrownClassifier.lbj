@@ -1,0 +1,38 @@
+package edu.illinois.cs.cogcomp.lbjava.learner.neuralnet.lbj;
+
+import edu.illinois.cs.cogcomp.lbjava.neuralnet.*;
+import edu.illinois.cs.cogcomp.lbjava.learner.*;
+
+/** 
+The input features are simple the set of real values 
+that serve as input to the neural net.
+ */
+real[] SGDInputVector(NeuralNetExample input) <- {
+    float[] datapoints = input.getInputFeatures();
+    for (int i = 0; i < datapoints.length; i++) {
+	    sense datapoints[i];
+	}
+}
+
+/**
+The output vector contains the data outputs. 
+*/
+real SGDOutputVector(NeuralNetExample d) <- {
+    float[] datapoints = d.getOutputLabels();
+    return datapoints[0];
+}
+
+/** 
+A learned text classifier; its definition comes from data. 
+*/
+real SGDBrownDataClassifier(NeuralNetExample d) <-
+  learn SGDOutputVector
+  using SGDInputVector
+  /*
+  from new BrownReader("data/brown/their-brown80.feat")
+  10 rounds
+  */
+  with StochasticGradientDescent {}
+  /*  testFrom new BrownReader("data/brown/their-brown20.feat") 
+  progressOutput 10*/
+end
